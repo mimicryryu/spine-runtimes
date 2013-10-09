@@ -34,6 +34,8 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 BoundingBoxAttachment* BoundingBoxAttachment_create (const char* name) {
 	BoundingBoxAttachment* self = NEW(BoundingBoxAttachment);
 	_Attachment_init(SUPER(self), name, ATTACHMENT_BOUNDING_BOX, _Attachment_deinit);
@@ -54,3 +56,5 @@ void BoundingBoxAttachment_computeWorldVertices (BoundingBoxAttachment* self, fl
 		worldVertices[i + 1] = px * bone->m10 + py * bone->m11 + y;
 	}
 }
+
+}} // namespace cocos2d { namespace extension {

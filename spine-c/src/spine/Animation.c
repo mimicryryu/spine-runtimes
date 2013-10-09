@@ -34,6 +34,9 @@
 #include <spine/Animation.h>
 #include <limits.h>
 #include <spine/extension.h>
+#include "cocos2d.h" //** Added by Mimicry. 2013-10-08
+
+namespace cocos2d { namespace extension {
 
 Animation* Animation_create (const char* name, int timelineCount) {
 	Animation* self = NEW(Animation);
@@ -317,8 +320,8 @@ void _TranslateTimeline_apply (const Timeline* timeline, Skeleton* skeleton, flo
 	bone = skeleton->bones[self->boneIndex];
 
 	if (time >= self->frames[self->framesLength - 3]) { /* Time is after last frame. */
-		bone->x += (bone->data->x + self->frames[self->framesLength - 2] - bone->x) * alpha;
-		bone->y += (bone->data->y + self->frames[self->framesLength - 1] - bone->y) * alpha;
+		bone->x += (bone->data->x + self->frames[self->framesLength - 2]/CC_CONTENT_SCALE_FACTOR() - bone->x) * alpha; //** Modified by Mimicry. 2013-10-08
+		bone->y += (bone->data->y + self->frames[self->framesLength - 1]/CC_CONTENT_SCALE_FACTOR() - bone->y) * alpha; //** Modified by Mimicry. 2013-10-08
 		return;
 	}
 
@@ -330,10 +333,10 @@ void _TranslateTimeline_apply (const Timeline* timeline, Skeleton* skeleton, flo
 	percent = 1 - (time - frameTime) / (self->frames[frameIndex + TRANSLATE_LAST_FRAME_TIME] - frameTime);
 	percent = CurveTimeline_getCurvePercent(SUPER(self), frameIndex / 3 - 1, percent < 0 ? 0 : (percent > 1 ? 1 : percent));
 
-	bone->x += (bone->data->x + lastFrameX + (self->frames[frameIndex + TRANSLATE_FRAME_X] - lastFrameX) * percent - bone->x)
-			* alpha;
-	bone->y += (bone->data->y + lastFrameY + (self->frames[frameIndex + TRANSLATE_FRAME_Y] - lastFrameY) * percent - bone->y)
-			* alpha;
+	bone->x += (bone->data->x + lastFrameX/CC_CONTENT_SCALE_FACTOR() + (self->frames[frameIndex + TRANSLATE_FRAME_X] - lastFrameX)/CC_CONTENT_SCALE_FACTOR() * percent - bone->x)
+    * alpha; //** Modified by Mimicry. 2013-10-08
+	bone->y += (bone->data->y + lastFrameY/CC_CONTENT_SCALE_FACTOR() + (self->frames[frameIndex + TRANSLATE_FRAME_Y] - lastFrameY)/CC_CONTENT_SCALE_FACTOR() * percent - bone->y)
+    * alpha; //** Modified by Mimicry. 2013-10-08
 }
 
 TranslateTimeline* TranslateTimeline_create (int frameCount) {
@@ -473,8 +476,16 @@ void _AttachmentTimeline_apply (const Timeline* timeline, Skeleton* skeleton, fl
 		frameIndex = binarySearch(self->frames, self->framesLength, time, 1) - 1;
 
 	attachmentName = self->attachmentNames[frameIndex];
-	Slot_setAttachment(skeleton->slots[self->slotIndex],
-			attachmentName ? Skeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) : 0);
+//	Slot_setAttachment(skeleton->slots[self->slotIndex], //** Commented by Mimicry. 09-30-2013
+//			attachmentName ? Skeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) : 0); //** Commented by Mimicry. 09-30-2013
+    //** Added by Mimicry. 09-30-2013 -->
+    if (frameIndex == 0 && attachmentName == NULL && skeleton->slots[self->slotIndex]->data->attachmentName == NULL) {
+        Slot_setAttachment(skeleton->slots[self->slotIndex], 0); // Default invisible attachment
+    }
+    else {
+        Slot_setAttachment(skeleton->slots[self->slotIndex],
+                           attachmentName ? Skeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) : 0);
+    }//** <-- Added by Mimicry. 09-30-2013
 }
 
 void _AttachmentTimeline_dispose (Timeline* timeline) {
@@ -593,7 +604,7 @@ void _DrawOrderTimeline_apply (const Timeline* timeline, Skeleton* skeleton, flo
 
 	drawOrderToSetupIndex = self->drawOrders[frameIndex];
 	if (!drawOrderToSetupIndex)
-		memcpy(skeleton->drawOrder, skeleton->slots, self->slotCount * sizeof(int));
+		memcpy(skeleton->drawOrder, skeleton->slots, self->slotCount * sizeof(Slot*)); //** Modified by Mimicry. 2013-10-08
 	else {
 		for (i = 0; i < self->slotCount; i++)
 			skeleton->drawOrder[i] = skeleton->slots[drawOrderToSetupIndex[i]];
@@ -636,3 +647,5 @@ void DrawOrderTimeline_setFrame (DrawOrderTimeline* self, int frameIndex, float 
 		memcpy(CONST_CAST(int*, self->drawOrders[frameIndex]), drawOrder, self->slotCount * sizeof(int));
 	}
 }
+
+}} // namespace cocos2d { namespace extension {

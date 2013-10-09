@@ -40,9 +40,7 @@
 #include <spine/EventData.h>
 #include <spine/Animation.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct {
 	int boneCount;
@@ -77,8 +75,6 @@ EventData* SkeletonData_findEvent (const SkeletonData* self, const char* eventNa
 
 Animation* SkeletonData_findAnimation (const SkeletonData* self, const char* animationName);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SKELETONDATA_H_ */

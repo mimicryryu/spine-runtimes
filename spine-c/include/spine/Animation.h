@@ -36,9 +36,7 @@
 
 #include <spine/Event.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct Timeline Timeline;
 struct Skeleton;
@@ -177,8 +175,6 @@ DrawOrderTimeline* DrawOrderTimeline_create (int frameCount, int slotCount);
 
 void DrawOrderTimeline_setFrame (DrawOrderTimeline* self, int frameIndex, float time, const int* drawOrder);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ANIMATION_H_ */

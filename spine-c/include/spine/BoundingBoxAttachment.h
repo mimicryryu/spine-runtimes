@@ -38,9 +38,7 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct BoundingBoxAttachment BoundingBoxAttachment;
 struct BoundingBoxAttachment {
@@ -52,8 +50,6 @@ struct BoundingBoxAttachment {
 BoundingBoxAttachment* BoundingBoxAttachment_create (const char* name);
 void BoundingBoxAttachment_computeWorldVertices (BoundingBoxAttachment* self, float x, float y, Bone* bone, float* vertices);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_BOUNDINGBOXATTACHMENT_H_ */

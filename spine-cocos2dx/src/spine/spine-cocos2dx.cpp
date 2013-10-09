@@ -36,6 +36,8 @@
 
 USING_NS_CC;
 
+namespace cocos2d { namespace extension {
+
 void _AtlasPage_createTexture (AtlasPage* self, const char* path) {
 	CCTexture2D* texture = CCTextureCache::sharedTextureCache()->addImage(path);
 	CCTextureAtlas* textureAtlas = CCTextureAtlas::createWithTexture(texture, 128);
@@ -108,3 +110,5 @@ void RegionAttachment_updateQuad (RegionAttachment* self, Slot* slot, ccV3F_C4B_
 	quad->br.texCoords.u = self->uvs[VERTEX_X4];
 	quad->br.texCoords.v = self->uvs[VERTEX_Y4];
 }
+
+}} // namespace cocos2d { namespace extension {

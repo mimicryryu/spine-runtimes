@@ -38,9 +38,7 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef enum {
 	VERTEX_X1 = 0, VERTEX_Y1, VERTEX_X2, VERTEX_Y2, VERTEX_X3, VERTEX_Y3, VERTEX_X4, VERTEX_Y4
@@ -65,8 +63,6 @@ void RegionAttachment_setUVs (RegionAttachment* self, float u, float v, float u2
 void RegionAttachment_updateOffset (RegionAttachment* self);
 void RegionAttachment_computeWorldVertices (RegionAttachment* self, float x, float y, Bone* bone, float* vertices);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_REGIONATTACHMENT_H_ */

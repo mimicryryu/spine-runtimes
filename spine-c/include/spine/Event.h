@@ -36,9 +36,7 @@
 
 #include <spine/EventData.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct Event Event;
 struct Event {
@@ -51,8 +49,6 @@ struct Event {
 Event* Event_create (EventData* data);
 void Event_dispose (Event* self);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_EVENT_H_ */

@@ -35,6 +35,8 @@
 #include <string.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 Skeleton* Skeleton_create (SkeletonData* data) {
 	int i, ii;
 
@@ -166,7 +168,11 @@ int Skeleton_setSkinByName (Skeleton* self, const char* skinName) {
 }
 
 void Skeleton_setSkin (Skeleton* self, Skin* newSkin) {
-	if (self->skin && newSkin) Skin_attachAll(newSkin, self, self->skin);
+//	if (self->skin && newSkin) Skin_attachAll(newSkin, self, self->skin); //** Commented by Mimicry. 09-30-2013
+    //** Added by Mimicry. 09-30-2013 -->
+    if (newSkin) {
+        Skin_attachAll(newSkin, self, self->skin);
+    }//** <-- Added by Mimicry. 09-30-2013
 	CONST_CAST(Skin*, self->skin) = newSkin;
 }
 
@@ -209,3 +215,5 @@ int Skeleton_setAttachment (Skeleton* self, const char* slotName, const char* at
 void Skeleton_update (Skeleton* self, float deltaTime) {
 	self->time += deltaTime;
 }
+
+}} // namespace cocos2d { namespace extension {

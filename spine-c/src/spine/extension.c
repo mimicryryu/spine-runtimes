@@ -34,6 +34,8 @@
 #include <spine/extension.h>
 #include <stdio.h>
 
+namespace cocos2d { namespace extension {
+
 static void* (*mallocFunc) (size_t size) = malloc;
 static void (*freeFunc) (void* ptr) = free;
 
@@ -71,3 +73,5 @@ char* _readFile (const char* path, int* length) {
 
 	return data;
 }
+
+}} // namespace cocos2d { namespace extension {

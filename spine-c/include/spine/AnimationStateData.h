@@ -37,9 +37,7 @@
 #include <spine/Animation.h>
 #include <spine/SkeletonData.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct {
 	SkeletonData* const skeletonData;
@@ -55,8 +53,6 @@ void AnimationStateData_setMix (AnimationStateData* self, Animation* from, Anima
 /* Returns 0 if there is no mixing between the animations. */
 float AnimationStateData_getMix (AnimationStateData* self, Animation* from, Animation* to);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ANIMATIONSTATEDATA_H_ */

@@ -35,6 +35,8 @@
 #include <stdio.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 typedef struct _AttachmentLoaderVtable {
 	Attachment* (*newAttachment) (AttachmentLoader* self, Skin* skin, AttachmentType type, const char* name);
 	void (*dispose) (AttachmentLoader* self);
@@ -79,3 +81,5 @@ void _AttachmentLoader_setUnknownTypeError (AttachmentLoader* self, AttachmentTy
 	sprintf(buffer, "%d", type);
 	_AttachmentLoader_setError(self, "Unknown attachment type: ", buffer);
 }
+
+}} // namespace cocos2d { namespace extension {

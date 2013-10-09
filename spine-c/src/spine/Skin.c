@@ -34,6 +34,8 @@
 #include <spine/Skin.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 typedef struct _Entry _Entry;
 struct _Entry {
 	int slotIndex;
@@ -110,13 +112,33 @@ const char* Skin_getAttachmentName (const Skin* self, int slotIndex, int attachm
 }
 
 void Skin_attachAll (const Skin* self, Skeleton* skeleton, const Skin* oldSkin) {
-	const _Entry *entry = SUB_CAST(_Skin, oldSkin)->entries;
+//	const _Entry *entry = SUB_CAST(_Skin, oldSkin) ->entries; //** Commented by Mimicry. 09-30-2013
+	const _Entry *entry = SUB_CAST(_Skin, self) ->entries; //** Added by Mimicry. 09-30-2013
+    //** Added by Mimicry. 09-30-2013 -->
+    const Skin* default_skin = skeleton->data->defaultSkin;
+    for (int i = 0; i != skeleton->slotCount; ++i) {
+        if (skeleton->data->slots[i]->attachmentName != NULL
+            && Skin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
+            // Hide default invisible attachment
+            Slot_setAttachment(skeleton->slots[i],0);
+        }
+    }//** <-- Added by Mimicry. 09-30-2013    
 	while (entry) {
 		Slot *slot = skeleton->slots[entry->slotIndex];
-		if (slot->attachment == entry->attachment) {
+//		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013
 			Attachment *attachment = Skin_getAttachment(self, entry->slotIndex, entry->name);
 			if (attachment) Slot_setAttachment(slot, attachment);
-		}
+            else Slot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
+//		} //** Commented by Mimicry. 09-30-2013
 		entry = entry->next;
 	}
+	//** Added by Mimicry. 09-30-2013 -->
+    for (int i = 0; i != skeleton->slotCount; ++i) {
+        if (!skeleton->slots[i]->data->attachmentName) {
+            // Hide default invisible attachment
+            Slot_setAttachment(skeleton->slots[i],0);
+        }
+    }//** <-- Added by Mimicry. 09-30-2013
 }
+
+}} // namespace cocos2d { namespace extension {

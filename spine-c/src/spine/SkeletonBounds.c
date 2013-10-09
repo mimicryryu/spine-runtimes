@@ -35,6 +35,8 @@
 #include <limits.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 BoundingPolygon* BoundingPolygon_create (int capacity) {
 	BoundingPolygon* self = NEW(BoundingPolygon);
 	self->capacity = capacity;
@@ -206,3 +208,5 @@ BoundingPolygon* SkeletonBounds_getPolygon (SkeletonBounds* self, BoundingBoxAtt
 		if (self->boundingBoxes[i] == boundingBox) return self->polygons[i];
 	return 0;
 }
+
+}} // namespace cocos2d { namespace extension {

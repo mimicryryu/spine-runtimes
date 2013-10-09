@@ -37,9 +37,7 @@
 #include <spine/AnimationStateData.h>
 #include <spine/Event.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef enum {
 	ANIMATION_START, ANIMATION_END, ANIMATION_COMPLETE, ANIMATION_EVENT
@@ -93,8 +91,6 @@ TrackEntry* AnimationState_addAnimation (AnimationState* self, int trackIndex, A
 
 TrackEntry* AnimationState_getCurrent (AnimationState* self, int trackIndex);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ANIMATIONSTATE_H_ */

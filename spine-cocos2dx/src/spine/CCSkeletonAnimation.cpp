@@ -40,7 +40,7 @@ using std::min;
 using std::max;
 using std::vector;
 
-namespace spine {
+namespace cocos2d { namespace extension {
 
 static void callback (AnimationState* state, int trackIndex, EventType type, Event* event, int loopCount) {
 	((CCSkeletonAnimation*)state->context)->onAnimationStateEvent(trackIndex, type, event, loopCount);
@@ -147,4 +147,5 @@ void CCSkeletonAnimation::onAnimationStateEvent (int trackIndex, EventType type,
 	if (listenerInstance) (listenerInstance->*listenerMethod)(this, trackIndex, type, event, loopCount);
 }
 
-}
+}} // namespace cocos2d { namespace extension {
+

@@ -34,6 +34,8 @@
 #include <spine/RegionAttachment.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 RegionAttachment* RegionAttachment_create (const char* name) {
 	RegionAttachment* self = NEW(RegionAttachment);
 	self->scaleX = 1;
@@ -110,3 +112,5 @@ void RegionAttachment_computeWorldVertices (RegionAttachment* self, float x, flo
 	vertices[VERTEX_X4] = offset[VERTEX_X4] * bone->m00 + offset[VERTEX_Y4] * bone->m01 + x;
 	vertices[VERTEX_Y4] = offset[VERTEX_X4] * bone->m10 + offset[VERTEX_Y4] * bone->m11 + y;
 }
+
+}} // namespace cocos2d { namespace extension {

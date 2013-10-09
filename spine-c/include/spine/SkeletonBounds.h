@@ -37,9 +37,7 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/Skeleton.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace cocos2d { namespace extension {
 
 typedef struct {
 	float* const vertices;
@@ -87,8 +85,6 @@ BoundingBoxAttachment* SkeletonBounds_intersectsSegment (SkeletonBounds* self, f
 /** Returns the polygon for the specified bounding box, or null. */
 BoundingPolygon* SkeletonBounds_getPolygon (SkeletonBounds* self, BoundingBoxAttachment* boundingBox);
 
-#ifdef __cplusplus
-}
-#endif
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SKELETONBOUNDS_H_ */

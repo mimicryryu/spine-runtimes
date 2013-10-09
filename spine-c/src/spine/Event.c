@@ -34,6 +34,8 @@
 #include <spine/Event.h>
 #include <spine/extension.h>
 
+namespace cocos2d { namespace extension {
+
 Event* Event_create (EventData* data) {
 	Event* self = NEW(Event);
 	CONST_CAST(EventData*, self->data) = data;
@@ -44,3 +46,5 @@ void Event_dispose (Event* self) {
 	FREE(self->stringValue);
 	FREE(self);
 }
+
+}} // namespace cocos2d { namespace extension {

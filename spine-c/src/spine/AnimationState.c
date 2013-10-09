@@ -40,6 +40,8 @@
 #include <spine/SkeletonData.h>
 #include <string.h>
 
+namespace cocos2d { namespace extension {
+
 TrackEntry* _TrackEntry_create () {
 	TrackEntry* entry = NEW(TrackEntry);
 	entry->timeScale = 1;
@@ -278,3 +280,5 @@ TrackEntry* AnimationState_getCurrent (AnimationState* self, int trackIndex) {
 	if (trackIndex >= self->trackCount) return 0;
 	return self->tracks[trackIndex];
 }
+
+}} // namespace cocos2d { namespace extension {

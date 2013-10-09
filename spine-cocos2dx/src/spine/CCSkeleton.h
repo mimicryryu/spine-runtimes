@@ -37,7 +37,7 @@
 #include <spine/spine.h>
 #include "cocos2d.h"
 
-namespace spine {
+namespace cocos2d { namespace extension {
 
 /** Draws a skeleton. */
 class CCSkeleton: public cocos2d::CCNodeRGBA, public cocos2d::CCBlendProtocol {
@@ -101,6 +101,6 @@ private:
 	void initialize ();
 };
 
-}
+}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_CCSKELETON_H_ */
