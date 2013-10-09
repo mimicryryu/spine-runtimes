@@ -40,11 +40,16 @@
 namespace cocos2d { namespace extension {
 
 typedef struct {
-	AttachmentLoader super;
-	Atlas* atlas;
-} AtlasAttachmentLoader;
+	spAttachmentLoader super;
+	spAtlas* atlas;
+} spAtlasAttachmentLoader;
 
-AtlasAttachmentLoader* AtlasAttachmentLoader_create (Atlas* atlas);
+spAtlasAttachmentLoader* spAtlasAttachmentLoader_create (spAtlas* atlas);
+
+#ifdef SPINE_SHORT_NAMES
+typedef spAtlasAttachmentLoader AtlasAttachmentLoader;
+#define AtlasAttachmentLoader_create(...) spAtlasAttachmentLoader_create(__VA_ARGS__)
+#endif
 
 }} // namespace cocos2d { namespace extension {
 

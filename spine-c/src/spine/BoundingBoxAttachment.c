@@ -36,13 +36,13 @@
 
 namespace cocos2d { namespace extension {
 
-BoundingBoxAttachment* BoundingBoxAttachment_create (const char* name) {
-	BoundingBoxAttachment* self = NEW(BoundingBoxAttachment);
-	_Attachment_init(SUPER(self), name, ATTACHMENT_BOUNDING_BOX, _Attachment_deinit);
+spBoundingBoxAttachment* spBoundingBoxAttachment_create (const char* name) {
+	spBoundingBoxAttachment* self = NEW(spBoundingBoxAttachment);
+	_spAttachment_init(SUPER(self), name, ATTACHMENT_BOUNDING_BOX, _spAttachment_deinit);
 	return self;
 }
 
-void BoundingBoxAttachment_computeWorldVertices (BoundingBoxAttachment* self, float x, float y, Bone* bone, float* worldVertices) {
+void spBoundingBoxAttachment_computeWorldVertices (spBoundingBoxAttachment* self, float x, float y, spBone* bone, float* worldVertices) {
 	int i;
 	float px, py;
 	float* vertices = self->vertices;

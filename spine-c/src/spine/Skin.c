@@ -40,11 +40,11 @@ typedef struct _Entry _Entry;
 struct _Entry {
 	int slotIndex;
 	const char* name;
-	Attachment* attachment;
+	spAttachment* attachment;
 	_Entry* next;
 };
 
-_Entry* _Entry_create (int slotIndex, const char* name, Attachment* attachment) {
+_Entry* _Entry_create (int slotIndex, const char* name, spAttachment* attachment) {
 	_Entry* self = NEW(_Entry);
 	self->slotIndex = slotIndex;
 	MALLOC_STR(self->name, name);
@@ -53,7 +53,7 @@ _Entry* _Entry_create (int slotIndex, const char* name, Attachment* attachment) 
 }
 
 void _Entry_dispose (_Entry* self) {
-	Attachment_dispose(self->attachment);
+	spAttachment_dispose(self->attachment);
 	FREE(self->name);
 	FREE(self);
 }
@@ -61,18 +61,18 @@ void _Entry_dispose (_Entry* self) {
 /**/
 
 typedef struct {
-	Skin super;
+	spSkin super;
 	_Entry* entries;
-} _Skin;
+} _spSkin;
 
-Skin* Skin_create (const char* name) {
-	Skin* self = SUPER(NEW(_Skin));
+spSkin* spSkin_create (const char* name) {
+	spSkin* self = SUPER(NEW(_spSkin));
 	MALLOC_STR(self->name, name);
 	return self;
 }
 
-void Skin_dispose (Skin* self) {
-	_Entry* entry = SUB_CAST(_Skin, self)->entries;
+void spSkin_dispose (spSkin* self) {
+	_Entry* entry = SUB_CAST(_spSkin, self)->entries;
 	while (entry) {
 		_Entry* nextEntry = entry->next;
 		_Entry_dispose(entry);
@@ -83,14 +83,14 @@ void Skin_dispose (Skin* self) {
 	FREE(self);
 }
 
-void Skin_addAttachment (Skin* self, int slotIndex, const char* name, Attachment* attachment) {
+void spSkin_addAttachment (spSkin* self, int slotIndex, const char* name, spAttachment* attachment) {
 	_Entry* newEntry = _Entry_create(slotIndex, name, attachment);
-	newEntry->next = SUB_CAST(_Skin, self)->entries;
-	SUB_CAST(_Skin, self)->entries = newEntry;
+	newEntry->next = SUB_CAST(_spSkin, self)->entries;
+	SUB_CAST(_spSkin, self)->entries = newEntry;
 }
 
-Attachment* Skin_getAttachment (const Skin* self, int slotIndex, const char* name) {
-	const _Entry* entry = SUB_CAST(_Skin, self)->entries;
+spAttachment* spSkin_getAttachment (const spSkin* self, int slotIndex, const char* name) {
+	const _Entry* entry = SUB_CAST(_spSkin, self)->entries;
 	while (entry) {
 		if (entry->slotIndex == slotIndex && strcmp(entry->name, name) == 0) return entry->attachment;
 		entry = entry->next;
@@ -98,8 +98,8 @@ Attachment* Skin_getAttachment (const Skin* self, int slotIndex, const char* nam
 	return 0;
 }
 
-const char* Skin_getAttachmentName (const Skin* self, int slotIndex, int attachmentIndex) {
-	const _Entry* entry = SUB_CAST(_Skin, self)->entries;
+const char* spSkin_getAttachmentName (const spSkin* self, int slotIndex, int attachmentIndex) {
+	const _Entry* entry = SUB_CAST(_spSkin, self)->entries;
 	int i = 0;
 	while (entry) {
 		if (entry->slotIndex == slotIndex) {
@@ -111,24 +111,24 @@ const char* Skin_getAttachmentName (const Skin* self, int slotIndex, int attachm
 	return 0;
 }
 
-void Skin_attachAll (const Skin* self, Skeleton* skeleton, const Skin* oldSkin) {
-//	const _Entry *entry = SUB_CAST(_Skin, oldSkin) ->entries; //** Commented by Mimicry. 09-30-2013
-	const _Entry *entry = SUB_CAST(_Skin, self) ->entries; //** Added by Mimicry. 09-30-2013
+void spSkin_attachAll (const Skin* self, Skeleton* skeleton, const Skin* oldSkin) {
+//	const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
+	const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013
     //** Added by Mimicry. 09-30-2013 -->
     const Skin* default_skin = skeleton->data->defaultSkin;
     for (int i = 0; i != skeleton->slotCount; ++i) {
         if (skeleton->data->slots[i]->attachmentName != NULL
-            && Skin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
+            && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
             // Hide default invisible attachment
-            Slot_setAttachment(skeleton->slots[i],0);
+            spSlot_setAttachment(skeleton->slots[i],0);
         }
     }//** <-- Added by Mimicry. 09-30-2013    
 	while (entry) {
 		Slot *slot = skeleton->slots[entry->slotIndex];
 //		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013
-			Attachment *attachment = Skin_getAttachment(self, entry->slotIndex, entry->name);
-			if (attachment) Slot_setAttachment(slot, attachment);
-            else Slot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
+            spAttachment *attachment = spSkin_getAttachment(self, entry->slotIndex, entry->name);
+            if (attachment) spSlot_setAttachment(slot, attachment);
+            else spSlot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
 //		} //** Commented by Mimicry. 09-30-2013
 		entry = entry->next;
 	}
@@ -136,7 +136,7 @@ void Skin_attachAll (const Skin* self, Skeleton* skeleton, const Skin* oldSkin) 
     for (int i = 0; i != skeleton->slotCount; ++i) {
         if (!skeleton->slots[i]->data->attachmentName) {
             // Hide default invisible attachment
-            Slot_setAttachment(skeleton->slots[i],0);
+            spSlot_setAttachment(skeleton->slots[i],0);
         }
     }//** <-- Added by Mimicry. 09-30-2013
 }

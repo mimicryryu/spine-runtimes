@@ -36,13 +36,13 @@
 
 namespace cocos2d { namespace extension {
 
-EventData* EventData_create (const char* name) {
-	EventData* self = NEW(EventData);
+spEventData* spEventData_create (const char* name) {
+	spEventData* self = NEW(spEventData);
 	MALLOC_STR(self->name, name);
 	return self;
 }
 
-void EventData_dispose (EventData* self) {
+void spEventData_dispose (spEventData* self) {
 	FREE(self->stringValue);
 	FREE(self->name);
 	FREE(self);

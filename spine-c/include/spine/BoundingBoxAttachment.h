@@ -40,15 +40,21 @@
 
 namespace cocos2d { namespace extension {
 
-typedef struct BoundingBoxAttachment BoundingBoxAttachment;
-struct BoundingBoxAttachment {
-	Attachment super;
+typedef struct spBoundingBoxAttachment spBoundingBoxAttachment;
+struct spBoundingBoxAttachment {
+	spAttachment super;
 	int verticesCount;
 	float* vertices;
 };
 
-BoundingBoxAttachment* BoundingBoxAttachment_create (const char* name);
-void BoundingBoxAttachment_computeWorldVertices (BoundingBoxAttachment* self, float x, float y, Bone* bone, float* vertices);
+spBoundingBoxAttachment* spBoundingBoxAttachment_create (const char* name);
+void spBoundingBoxAttachment_computeWorldVertices (spBoundingBoxAttachment* self, float x, float y, spBone* bone, float* vertices);
+
+#ifdef SPINE_SHORT_NAMES
+typedef spBoundingBoxAttachment BoundingBoxAttachment;
+#define BoundingBoxAttachment_create(...) spBoundingBoxAttachment_create(__VA_ARGS__)
+#define BoundingBoxAttachment_computeWorldVertices(...) spBoundingBoxAttachment_computeWorldVertices(__VA_ARGS__)
+#endif
 
 }} // namespace cocos2d { namespace extension {
 

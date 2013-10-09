@@ -46,7 +46,9 @@ public class SkeletonComponent : MonoBehaviour {
 	public float timeScale = 1;
 	public bool calculateNormals;
 	public bool calculateTangents;
-	private Mesh mesh;
+	private MeshFilter meshFilter;
+	private Mesh mesh, mesh1, mesh2;
+	private bool useMesh1;
 	private float[] vertexPositions = new float[8];
 	private int lastVertexCount;
 	private Vector3[] vertices;
@@ -55,10 +57,9 @@ public class SkeletonComponent : MonoBehaviour {
 	private Material[] sharedMaterials = new Material[0];
 	private List<Material> submeshMaterials = new List<Material>();
 	private List<Submesh> submeshes = new List<Submesh>();
-	private Vector4[] tangents = new Vector4[0];
 
 	public virtual void Clear () {
-		GetComponent<MeshFilter>().mesh = null;
+		meshFilter.sharedMesh = null;
 		DestroyImmediate(mesh);
 		mesh = null;
 		renderer.sharedMaterial = null;
@@ -66,11 +67,9 @@ public class SkeletonComponent : MonoBehaviour {
 	}
 
 	public virtual void Initialize () {
-		mesh = new Mesh();
-		GetComponent<MeshFilter>().mesh = mesh;
-		mesh.name = "Skeleton Mesh";
-		mesh.hideFlags = HideFlags.HideAndDontSave;
-		mesh.MarkDynamic();
+		meshFilter = GetComponent<MeshFilter>();
+		mesh1 = newMesh();
+		mesh2 = newMesh();
 
 		vertices = new Vector3[0];
 
@@ -80,6 +79,14 @@ public class SkeletonComponent : MonoBehaviour {
 			skeleton.SetSkin(initialSkinName);
 			skeleton.SetSlotsToSetupPose();
 		}
+	}
+	
+	private Mesh newMesh () {
+		Mesh mesh = new Mesh();
+		mesh.name = "Skeleton Mesh";
+		mesh.hideFlags = HideFlags.HideAndDontSave;
+		mesh.MarkDynamic();
+		return mesh;
 	}
 	
 	public virtual void UpdateSkeleton () {
@@ -135,9 +142,13 @@ public class SkeletonComponent : MonoBehaviour {
 		else
 			sharedMaterials = submeshMaterials.ToArray();
 		renderer.sharedMaterials = sharedMaterials;
+		
+		// Double buffer mesh.
+		Mesh mesh = useMesh1 ? mesh1 : mesh2;
+		useMesh1 = !useMesh1;
+		meshFilter.sharedMesh = mesh;
 
 		// Ensure mesh data is the right size.
-		Mesh mesh = this.mesh;
 		Vector3[] vertices = this.vertices;
 		int vertexCount = quadCount * 4;
 		bool newTriangles = vertexCount > vertices.Length;
@@ -146,7 +157,8 @@ public class SkeletonComponent : MonoBehaviour {
 			this.vertices = vertices = new Vector3[vertexCount];
 			this.colors = new Color32[vertexCount];
 			this.uvs = new Vector2[vertexCount];
-			mesh.Clear();
+			mesh1.Clear();
+			mesh2.Clear();
 		} else {
 			// Too many vertices, zero the extra.
 			Vector3 zero = Vector3.zero;
@@ -192,6 +204,7 @@ public class SkeletonComponent : MonoBehaviour {
 
 			vertexIndex += 4;
 		}
+		
 		mesh.vertices = vertices;
 		mesh.colors32 = colors;
 		mesh.uv = uvs;
@@ -201,17 +214,22 @@ public class SkeletonComponent : MonoBehaviour {
 		for (int i = 0; i < submeshCount; ++i)
 			mesh.SetTriangles(submeshes[i].indexes, i);
 
-		if (calculateNormals) {
-			mesh.RecalculateNormals();
+		if (newTriangles && calculateNormals) {
+			Vector3[] normals = new Vector3[vertexCount];
+			Vector3 normal = new Vector3(0, 0, -1);
+			for (int i = 0; i < vertexCount; i++)
+				normals[i] = normal;
+			(useMesh1 ? mesh1 : mesh2).vertices = vertices;
+			mesh1.normals = normals;
+			mesh2.normals = normals;
+
 			if (calculateTangents) {
-				Vector4[] tangents = this.tangents;
-				int count = mesh.normals.Length;
-				if (tangents.Length != count) {
-					this.tangents = tangents = new Vector4[count];
-					for (int i = 0; i < count; i++)
-						tangents[i] = new Vector4(1, 0, 0, 1);
-				}
-				mesh.tangents = tangents;
+				Vector4[] tangents = new Vector4[vertexCount];
+				Vector3 tangent = new Vector3(0, 0, 1);
+				for (int i = 0; i < vertexCount; i++)
+					tangents[i] = tangent;
+				mesh1.tangents = tangents;
+				mesh2.tangents = tangents;
 			}
 		}
 	}

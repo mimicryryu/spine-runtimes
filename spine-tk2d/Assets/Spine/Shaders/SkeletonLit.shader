@@ -1,4 +1,4 @@
-Shader "Spine/Skeleton" {
+﻿Shader "Spine/Skeleton Lit" {
 	Properties {
 		_Cutoff ("Shadow alpha cutoff", Range(0,1)) = 0.1
 		_MainTex ("Texture to blend", 2D) = "black" {}
@@ -11,12 +11,13 @@ Shader "Spine/Skeleton" {
 		Cull Off
 		ZWrite Off
 		Blend One OneMinusSrcAlpha
-		Lighting Off
 
 		Pass {
+			Tags { "LightMode"="Vertex" }
 			ColorMaterial AmbientAndDiffuse
+			Lighting On
 			SetTexture [_MainTex] {
-				Combine texture * primary
+				Combine texture * primary DOUBLE, texture * primary
 			}
 		}
 
@@ -70,10 +71,11 @@ Shader "Spine/Skeleton" {
 		Cull Off
 		ZWrite Off
 		Blend One OneMinusSrcAlpha
-		Lighting Off
 
 		Pass {
+			Tags { "LightMode"="Vertex" }
 			ColorMaterial AmbientAndDiffuse
+			Lighting On
 			SetTexture [_MainTex] {
 				Combine texture * primary DOUBLE, texture * primary
 			}

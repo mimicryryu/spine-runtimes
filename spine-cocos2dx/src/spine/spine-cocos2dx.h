@@ -41,7 +41,7 @@
 
 namespace cocos2d { namespace extension {
 
-void RegionAttachment_updateQuad (RegionAttachment* self, Slot* slot, cocos2d::ccV3F_C4B_T2F_Quad* quad, bool premultiplied = false);
+void spRegionAttachment_updateQuad (spRegionAttachment* self, spSlot* slot, cocos2d::ccV3F_C4B_T2F_Quad* quad, bool premultiplied = false);
 
 }} // namespace cocos2d { namespace extension {
 

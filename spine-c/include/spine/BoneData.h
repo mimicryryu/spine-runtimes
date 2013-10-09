@@ -36,10 +36,10 @@
 
 namespace cocos2d { namespace extension {
 
-typedef struct BoneData BoneData;
-struct BoneData {
+typedef struct spBoneData spBoneData;
+struct spBoneData {
 	const char* const name;
-	BoneData* const parent;
+	spBoneData* const parent;
 	float length;
 	float x, y;
 	float rotation;
@@ -47,8 +47,14 @@ struct BoneData {
 	int/*bool*/inheritScale, inheritRotation;
 };
 
-BoneData* BoneData_create (const char* name, BoneData* parent);
-void BoneData_dispose (BoneData* self);
+spBoneData* spBoneData_create (const char* name, spBoneData* parent);
+void spBoneData_dispose (spBoneData* self);
+
+#ifdef SPINE_SHORT_NAMES
+typedef spBoneData BoneData;
+#define BoneData_create(...) spBoneData_create(__VA_ARGS__)
+#define BoneData_dispose(...) spBoneData_dispose(__VA_ARGS__)
+#endif
 
 }} // namespace cocos2d { namespace extension {
 
