@@ -604,7 +604,7 @@ void _spDrawOrderTimeline_apply (const spTimeline* timeline, spSkeleton* skeleto
 
 	drawOrderToSetupIndex = self->drawOrders[frameIndex];
 	if (!drawOrderToSetupIndex)
-		memcpy(skeleton->drawOrder, skeleton->slots, self->slotCount * sizeof(Slot*)); //** Modified by Mimicry. 2013-10-08
+		memcpy(skeleton->drawOrder, skeleton->slots, self->slotCount * sizeof(spSlot*)); //** Modified by Mimicry. 2013-10-08
 	else {
 		for (i = 0; i < self->slotCount; i++)
 			skeleton->drawOrder[i] = skeleton->slots[drawOrderToSetupIndex[i]];

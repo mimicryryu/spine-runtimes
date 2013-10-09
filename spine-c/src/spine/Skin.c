@@ -111,28 +111,28 @@ const char* spSkin_getAttachmentName (const spSkin* self, int slotIndex, int att
 	return 0;
 }
 
-void spSkin_attachAll (const Skin* self, Skeleton* skeleton, const Skin* oldSkin) {
-//	const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
-	const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013
+void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* oldSkin) {
+    //	const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
+    const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013
     //** Added by Mimicry. 09-30-2013 -->
-    const Skin* default_skin = skeleton->data->defaultSkin;
+    const spSkin* default_skin = skeleton->data->defaultSkin;
     for (int i = 0; i != skeleton->slotCount; ++i) {
         if (skeleton->data->slots[i]->attachmentName != NULL
             && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
             // Hide default invisible attachment
             spSlot_setAttachment(skeleton->slots[i],0);
         }
-    }//** <-- Added by Mimicry. 09-30-2013    
-	while (entry) {
-		Slot *slot = skeleton->slots[entry->slotIndex];
-//		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013
-            spAttachment *attachment = spSkin_getAttachment(self, entry->slotIndex, entry->name);
-            if (attachment) spSlot_setAttachment(slot, attachment);
-            else spSlot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
-//		} //** Commented by Mimicry. 09-30-2013
-		entry = entry->next;
-	}
-	//** Added by Mimicry. 09-30-2013 -->
+    }//** <-- Added by Mimicry. 09-30-2013
+    while (entry) {
+        spSlot *slot = skeleton->slots[entry->slotIndex];
+        //		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013
+        spAttachment *attachment = spSkin_getAttachment(self, entry->slotIndex, entry->name);
+        if (attachment) spSlot_setAttachment(slot, attachment);
+        else spSlot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
+        //		} //** Commented by Mimicry. 09-30-2013
+        entry = entry->next;
+    }
+    //** Added by Mimicry. 09-30-2013 -->
     for (int i = 0; i != skeleton->slotCount; ++i) {
         if (!skeleton->slots[i]->data->attachmentName) {
             // Hide default invisible attachment

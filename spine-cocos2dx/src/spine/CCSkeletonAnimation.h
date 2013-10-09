@@ -41,7 +41,7 @@
 namespace cocos2d { namespace extension {
 
 class CCSkeletonAnimation;
-typedef void (cocos2d::CCObject::*SEL_AnimationStateEvent)(spine::CCSkeletonAnimation* node, int trackIndex, spEventType type, spEvent* event, int loopCount);
+typedef void (cocos2d::CCObject::*SEL_AnimationStateEvent)(CCSkeletonAnimation* node, int trackIndex, spEventType type, spEvent* event, int loopCount);
 #define animationStateEvent_selector(_SELECTOR) (SEL_AnimationStateEvent)(&_SELECTOR)
 
 /** Draws an animated skeleton, providing an AnimationState for applying one or more animations and queuing animations to be
