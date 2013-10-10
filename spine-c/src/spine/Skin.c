@@ -116,11 +116,13 @@ void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* o
     const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013
     //** Added by Mimicry. 09-30-2013 -->
     const spSkin* default_skin = skeleton->data->defaultSkin;
-    for (int i = 0; i != skeleton->slotCount; ++i) {
-        if (skeleton->data->slots[i]->attachmentName != NULL
-            && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
-            // Hide default invisible attachment
-            spSlot_setAttachment(skeleton->slots[i],0);
+    if (default_skin) {
+        for (int i = 0; i != skeleton->slotCount; ++i) {
+            if (skeleton->data->slots[i]->attachmentName != NULL
+                && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
+                // Hide default invisible attachment
+                spSlot_setAttachment(skeleton->slots[i],0);
+            }
         }
     }//** <-- Added by Mimicry. 09-30-2013
     while (entry) {
