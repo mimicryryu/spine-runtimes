@@ -84,15 +84,16 @@ void spAnimation_mix (const spAnimation* self, spSkeleton* skeleton, float lastT
 /**/
 
 typedef struct _spTimelineVtable {
-	void (*apply) (const spTimeline* self, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents, int* eventCount,
-			float alpha);
+	void (*apply) (const spTimeline* self, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
+			int* eventCount, float alpha);
 	void (*dispose) (spTimeline* self);
 } _spTimelineVtable;
 
-void _spTimeline_init (spTimeline* self, /**/
+void _spTimeline_init (spTimeline* self, spTimelineType type, /**/
 void (*dispose) (spTimeline* self), /**/
 		void (*apply) (const spTimeline* self, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
 				int* eventCount, float alpha)) {
+	CONST_CAST(spTimelineType, self->type) = type;
 	CONST_CAST(_spTimelineVtable*, self->vtable) = NEW(_spTimelineVtable);
 	VTABLE(spTimeline, self)->dispose = dispose;
 	VTABLE(spTimeline, self)->apply = apply;
@@ -117,11 +118,11 @@ static const float CURVE_LINEAR = 0;
 static const float CURVE_STEPPED = -1;
 static const int CURVE_SEGMENTS = 10;
 
-void _spCurveTimeline_init (spCurveTimeline* self, int frameCount, /**/
+void _spCurveTimeline_init (spCurveTimeline* self, spTimelineType type, int frameCount, /**/
 void (*dispose) (spTimeline* self), /**/
 		void (*apply) (const spTimeline* self, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
 				int* eventCount, float alpha)) {
-	_spTimeline_init(SUPER(self), dispose, apply);
+	_spTimeline_init(SUPER(self), type, dispose, apply);
 	self->curves = CALLOC(float, (frameCount - 1) * 6);
 }
 
@@ -232,11 +233,11 @@ void _spBaseTimeline_dispose (spTimeline* timeline) {
 }
 
 /* Many timelines have structure identical to struct spBaseTimeline and extend spCurveTimeline. **/
-struct spBaseTimeline* _spBaseTimeline_create (int frameCount, int frameSize, /**/
+struct spBaseTimeline* _spBaseTimeline_create (int frameCount, spTimelineType type, int frameSize, /**/
 		void (*apply) (const spTimeline* self, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
 				int* eventCount, float alpha)) {
 	struct spBaseTimeline* self = NEW(struct spBaseTimeline);
-	_spCurveTimeline_init(SUPER(self), frameCount, _spBaseTimeline_dispose, apply);
+	_spCurveTimeline_init(SUPER(self), type, frameCount, _spBaseTimeline_dispose, apply);
 
 	CONST_CAST(int, self->framesLength) = frameCount * frameSize;
 	CONST_CAST(float*, self->frames) = CALLOC(float, self->framesLength);
@@ -292,7 +293,7 @@ void _spRotateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, 
 }
 
 spRotateTimeline* spRotateTimeline_create (int frameCount) {
-	return _spBaseTimeline_create(frameCount, 2, _spRotateTimeline_apply);
+	return _spBaseTimeline_create(frameCount, TIMELINE_ROTATE, 2, _spRotateTimeline_apply);
 }
 
 void spRotateTimeline_setFrame (spRotateTimeline* self, int frameIndex, float time, float angle) {
@@ -307,8 +308,8 @@ static const int TRANSLATE_LAST_FRAME_TIME = -3;
 static const int TRANSLATE_FRAME_X = 1;
 static const int TRANSLATE_FRAME_Y = 2;
 
-void _spTranslateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
-		int* eventCount, float alpha) {
+void _spTranslateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time,
+		spEvent** firedEvents, int* eventCount, float alpha) {
 	spBone *bone;
 	int frameIndex;
 	float lastFrameX, lastFrameY, frameTime, percent;
@@ -340,7 +341,7 @@ void _spTranslateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleto
 }
 
 spTranslateTimeline* spTranslateTimeline_create (int frameCount) {
-	return _spBaseTimeline_create(frameCount, 3, _spTranslateTimeline_apply);
+	return _spBaseTimeline_create(frameCount, TIMELINE_TRANLATE, 3, _spTranslateTimeline_apply);
 }
 
 void spTranslateTimeline_setFrame (spTranslateTimeline* self, int frameIndex, float time, float x, float y) {
@@ -384,7 +385,7 @@ void _spScaleTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, f
 }
 
 spScaleTimeline* spScaleTimeline_create (int frameCount) {
-	return _spBaseTimeline_create(frameCount, 3, _spScaleTimeline_apply);
+	return _spBaseTimeline_create(frameCount, TIMELINE_SCALE, 3, _spScaleTimeline_apply);
 }
 
 void spScaleTimeline_setFrame (spScaleTimeline* self, int frameIndex, float time, float x, float y) {
@@ -448,7 +449,7 @@ void _spColorTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, f
 }
 
 spColorTimeline* spColorTimeline_create (int frameCount) {
-	return (spColorTimeline*)_spBaseTimeline_create(frameCount, 5, _spColorTimeline_apply);
+	return (spColorTimeline*)_spBaseTimeline_create(frameCount, TIMELINE_COLOR, 5, _spColorTimeline_apply);
 }
 
 void spColorTimeline_setFrame (spColorTimeline* self, int frameIndex, float time, float r, float g, float b, float a) {
@@ -462,8 +463,8 @@ void spColorTimeline_setFrame (spColorTimeline* self, int frameIndex, float time
 
 /**/
 
-void _spAttachmentTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
-		int* eventCount, float alpha) {
+void _spAttachmentTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time,
+		spEvent** firedEvents, int* eventCount, float alpha) {
 	int frameIndex;
 	const char* attachmentName;
 	spAttachmentTimeline* self = (spAttachmentTimeline*)timeline;
@@ -503,7 +504,7 @@ void _spAttachmentTimeline_dispose (spTimeline* timeline) {
 
 spAttachmentTimeline* spAttachmentTimeline_create (int frameCount) {
 	spAttachmentTimeline* self = NEW(spAttachmentTimeline);
-	_spTimeline_init(SUPER(self), _spAttachmentTimeline_dispose, _spAttachmentTimeline_apply);
+	_spTimeline_init(SUPER(self), TIMELINE_ATTACHMENT, _spAttachmentTimeline_dispose, _spAttachmentTimeline_apply);
 
 	CONST_CAST(int, self->framesLength) = frameCount;
 	CONST_CAST(float*, self->frames) = CALLOC(float, frameCount);
@@ -570,7 +571,7 @@ void _spEventTimeline_dispose (spTimeline* timeline) {
 
 spEventTimeline* spEventTimeline_create (int frameCount) {
 	spEventTimeline* self = NEW(spEventTimeline);
-	_spTimeline_init(SUPER(self), _spEventTimeline_dispose, _spEventTimeline_apply);
+	_spTimeline_init(SUPER(self), TIMELINE_EVENT, _spEventTimeline_dispose, _spEventTimeline_apply);
 
 	CONST_CAST(int, self->framesLength) = frameCount;
 	CONST_CAST(float*, self->frames) = CALLOC(float, frameCount);
@@ -588,8 +589,8 @@ void spEventTimeline_setFrame (spEventTimeline* self, int frameIndex, float time
 
 /**/
 
-void _spDrawOrderTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time, spEvent** firedEvents,
-		int* eventCount, float alpha) {
+void _spDrawOrderTimeline_apply (const spTimeline* timeline, spSkeleton* skeleton, float lastTime, float time,
+		spEvent** firedEvents, int* eventCount, float alpha) {
 	int i;
 	int frameIndex;
 	const int* drawOrderToSetupIndex;
@@ -626,7 +627,7 @@ void _spDrawOrderTimeline_dispose (spTimeline* timeline) {
 
 spDrawOrderTimeline* spDrawOrderTimeline_create (int frameCount, int slotCount) {
 	spDrawOrderTimeline* self = NEW(spDrawOrderTimeline);
-	_spTimeline_init(SUPER(self), _spDrawOrderTimeline_dispose, _spDrawOrderTimeline_apply);
+	_spTimeline_init(SUPER(self), TIMELINE_DRAWORDER, _spDrawOrderTimeline_dispose, _spDrawOrderTimeline_apply);
 
 	CONST_CAST(int, self->framesLength) = frameCount;
 	CONST_CAST(float*, self->frames) = CALLOC(float, frameCount);
