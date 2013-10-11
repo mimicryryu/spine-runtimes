@@ -55,6 +55,9 @@ spAttachment* spSkin_getAttachment (const spSkin* self, int slotIndex, const cha
 /* Returns 0 if the slot or attachment was not found. */
 const char* spSkin_getAttachmentName (const spSkin* self, int slotIndex, int attachmentIndex);
 
+/* Added by Mimicry. 2013-10-11 */
+int spSkin_getAttachmentCount(const spSkin* self, int slotIndex);
+
 /** Attach each attachment in this skin if the corresponding attachment in oldSkin is currently attached. */
 void spSkin_attachAll (const spSkin* self, struct spSkeleton* skeleton, const spSkin* oldspSkin);
 

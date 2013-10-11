@@ -485,7 +485,7 @@ void _spAttachmentTimeline_apply (const spTimeline* timeline, spSkeleton* skelet
     }
     else {
         spSlot_setAttachment(skeleton->slots[self->slotIndex],
-                           attachmentName ? spSkeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) : 0);
+                             attachmentName ? ( skeleton->slots[self->slotIndex]->holdAttachment?skeleton->slots[self->slotIndex]->holdAttachment:spSkeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) ) : 0);
     }//** <-- Added by Mimicry. 09-30-2013
 }
 

@@ -205,6 +205,7 @@ int spSkeleton_setAttachment (spSkeleton* self, const char* slotName, const char
 				spAttachment* attachment = spSkeleton_getAttachmentForSlotIndex(self, i, attachmentName);
 				if (!attachment) return 0;
 				spSlot_setAttachment(slot, attachment);
+                CONST_CAST(spAttachment*, slot->holdAttachment) = attachment; //** Added By Mimicry. 2013-10-11
 			}
 			return 1;
 		}

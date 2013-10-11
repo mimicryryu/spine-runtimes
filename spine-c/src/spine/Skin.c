@@ -110,7 +110,21 @@ const char* spSkin_getAttachmentName (const spSkin* self, int slotIndex, int att
 	}
 	return 0;
 }
-
+    
+//** Added By Mimicry. 2013-10-11 -->
+int spSkin_getAttachmentCount(const spSkin* self, int slotIndex) {
+    const _Entry* entry = SUB_CAST(_spSkin, self)->entries;
+    int i = 0;
+    while (entry) {
+        if (entry->slotIndex == slotIndex) {
+            i++;
+        }
+        entry = entry->next;
+    }
+    return i;
+}
+//** <-- Added By Mimicry. 2013-10-11
+    
 void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* oldSkin) {
     //	const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
     const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013

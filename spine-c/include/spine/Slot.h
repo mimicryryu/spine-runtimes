@@ -48,6 +48,7 @@ typedef struct spSlot {
 	spBone* const bone;
 	float r, g, b, a;
 	spAttachment* const attachment;
+    spAttachment* const holdAttachment; //** For holding attachment such as "weapon". Added By Mimicry. 2013-10-11
 } spSlot;
 
 spSlot* spSlot_create (spSlotData* data, struct spSkeleton* skeleton, spBone* bone);
