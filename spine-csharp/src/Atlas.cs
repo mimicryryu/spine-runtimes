@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 #if WINDOWS_STOREAPP
 using System.Threading.Tasks;
@@ -64,7 +65,14 @@ namespace Spine {
 		}
 #else
 		public Atlas (String path, TextureLoader textureLoader) {
-			using (StreamReader reader = new StreamReader(path)) {
+
+#if WINDOWS_PHONE
+            Stream stream = Microsoft.Xna.Framework.TitleContainer.OpenStream(path);
+            using (StreamReader reader = new StreamReader(stream))
+            {
+#else
+            using (StreamReader reader = new StreamReader(path)) {
+#endif
 				try {
 					Load(reader, Path.GetDirectoryName(path), textureLoader);
 				} catch (Exception ex) {
@@ -102,8 +110,8 @@ namespace Spine {
 					page.format = (Format)Enum.Parse(typeof(Format), readValue(reader), false);
 
 					readTuple(reader, tuple);
-					page.minFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[0]);
-					page.magFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[1]);
+					page.minFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[0], false);
+					page.magFilter = (TextureFilter)Enum.Parse(typeof(TextureFilter), tuple[1], false);
 
 					String direction = readValue(reader);
 					page.uWrap = TextureWrap.ClampToEdge;
