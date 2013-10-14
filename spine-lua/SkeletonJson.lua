@@ -37,6 +37,10 @@ local SlotData = require "spine-lua.SlotData"
 local Skin = require "spine-lua.Skin"
 local AttachmentLoader = require "spine-lua.AttachmentLoader"
 local Animation = require "spine-lua.Animation"
+local EventData = require "spine-lua.EventData"
+local Event = require "spine-lua.Event"
+local AttachmentType = require "spine-lua.AttachmentType"
+
 local TIMELINE_SCALE = "scale"
 local TIMELINE_ROTATE = "rotate"
 local TIMELINE_TRANSLATE = "translate"
@@ -123,9 +127,8 @@ function SkeletonJson.new (attachmentLoader)
 		end
 
 		-- Skins.
-		local map = root["skins"]
-		if map then
-			for skinName,skinMap in pairs(map) do
+		if root["skins"] then
+			for skinName,skinMap in pairs(root["skins"]) do
 				local skin = Skin.new(skinName)
 				for slotName,slotMap in pairs(skinMap) do
 					local slotIndex = skeletonData.slotNameIndices[slotName]
@@ -144,10 +147,20 @@ function SkeletonJson.new (attachmentLoader)
 			end
 		end
 
+		-- Events.
+		if root["events"] then
+			for eventName,eventMap in pairs(root["events"]) do
+				local eventData = EventData.new(eventName)
+				eventData.intValue = eventMap["int"] or 0
+				eventData.floatValue = eventMap["float"] or 0
+				eventData.stringValue = eventMap["string"]
+				table.insert(skeletonData.events, eventData)
+			end
+		end
+
 		-- Animations.
-		map = root["animations"]
-		if map then
-			for animationName,animationMap in pairs(map) do
+		if root["animations"] then
+			for animationName,animationMap in pairs(root["animations"]) do
 				readAnimation(animationName, animationMap, skeletonData)
 			end
 		end
@@ -158,17 +171,25 @@ function SkeletonJson.new (attachmentLoader)
 	readAttachment = function (name, map, scale)
 		name = map["name"] or name
 		local attachment
-		local type = map["type"] or AttachmentLoader.ATTACHMENT_REGION
+		local type = AttachmentType[map["type"] or "region"]
 		attachment = attachmentLoader:newAttachment(type, name)
 		if not attachment then return nil end
 
-		attachment.x = (map["x"] or 0) * scale
-		attachment.y = (map["y"] or 0) * scale
-		attachment.scaleX = (map["scaleX"] or 1)
-		attachment.scaleY = (map["scaleY"] or 1)
-		attachment.rotation = (map["rotation"] or 0)
-		attachment.width = map["width"] * scale
-		attachment.height = map["height"] * scale
+		if type == AttachmentType.region then
+			attachment.x = (map["x"] or 0) * scale
+			attachment.y = (map["y"] or 0) * scale
+			attachment.scaleX = (map["scaleX"] or 1)
+			attachment.scaleY = (map["scaleY"] or 1)
+			attachment.rotation = (map["rotation"] or 0)
+			attachment.width = map["width"] * scale
+			attachment.height = map["height"] * scale
+		elseif type == AttachmentType.boundingbox then
+			local vertices = map["vertices"]
+			for i,point in ipairs(vertices) do
+				table.insert(attachment.vertices, vertices[i] * scale)
+			end
+		end
+
 		return attachment
 	end
 
@@ -190,7 +211,7 @@ function SkeletonJson.new (attachmentLoader)
 						local keyframeIndex = 0
 						for i,valueMap in ipairs(values) do
 							local time = valueMap["time"]
-							timeline:setKeyframe(keyframeIndex, time, valueMap["angle"])
+							timeline:setFrame(keyframeIndex, time, valueMap["angle"])
 							readCurve(timeline, keyframeIndex, valueMap)
 							keyframeIndex = keyframeIndex + 1
 						end
@@ -213,7 +234,7 @@ function SkeletonJson.new (attachmentLoader)
 							local time = valueMap["time"]
 							local x = (valueMap["x"] or 0) * timelineScale
 							local y = (valueMap["y"] or 0) * timelineScale
-							timeline:setKeyframe(keyframeIndex, time, x, y)
+							timeline:setFrame(keyframeIndex, time, x, y)
 							readCurve(timeline, keyframeIndex, valueMap)
 							keyframeIndex = keyframeIndex + 1
 						end
@@ -241,7 +262,7 @@ function SkeletonJson.new (attachmentLoader)
 						for i,valueMap in ipairs(values) do
 							local time = valueMap["time"]
 							local color = valueMap["color"]
-							timeline:setKeyframe(
+							timeline:setFrame(
 								keyframeIndex, time, 
 								tonumber(color:sub(1, 2), 16),
 								tonumber(color:sub(3, 4), 16),
@@ -258,13 +279,13 @@ function SkeletonJson.new (attachmentLoader)
 						local timeline = Animation.AttachmentTimeline.new()
 						timeline.slotName = slotName
 
-						local keyframeIndex = 0
+						local frameIndex = 0
 						for i,valueMap in ipairs(values) do
 							local time = valueMap["time"]
 							local attachmentName = valueMap["name"]
 							if not attachmentName then attachmentName = nil end
-							timeline:setKeyframe(keyframeIndex, time, attachmentName)
-							keyframeIndex = keyframeIndex + 1
+							timeline:setFrame(frameIndex, time, attachmentName)
+							frameIndex = frameIndex + 1
 						end
 						table.insert(timelines, timeline)
 						duration = math.max(duration, timeline:getDuration())
@@ -276,16 +297,84 @@ function SkeletonJson.new (attachmentLoader)
 			end
 		end
 
+		local events = map["events"]
+		if events then
+			local timeline = Animation.EventTimeline.new(#events)
+			local frameIndex = 0
+			for i,eventMap in ipairs(events) do
+				local eventData = skeletonData:findEvent(eventMap["name"])
+				if not eventData then error("Event not found: " + eventMap["name"]) end
+				local event = Event.new(eventData)
+				event.intValue = eventMap["int"] or eventData.intValue
+				event.floatValue = eventMap["float"] or eventData.floatValue
+				event.stringValue = eventMap["string"] or eventData.stringValue
+				timeline:setFrame(frameIndex, eventMap["time"], event)
+				frameIndex = frameIndex + 1
+			end
+			table.insert(timelines, timeline)
+			duration = math.max(duration, timeline:getDuration())
+		end
+
+		local drawOrderValues = map["draworder"]
+		if drawOrderValues then
+			local timeline = Animation.DrawOrderTimeline.new(#drawOrderValues)
+			local slotCount = #skeletonData.slots
+			local frameIndex = 0
+			for i,drawOrderMap in ipairs(drawOrderValues) do
+				local drawOrder = nil
+				if drawOrderMap["offsets"] then
+					drawOrder = {}
+					for ii = 1, slotCount do
+						drawOrder[ii] = -1
+					end
+					local offsets = drawOrderMap["offsets"]
+					local unchanged = {}
+					local originalIndex = 0
+					local unchangedIndex = 0
+					for ii,offsetMap in ipairs(offsets) do
+						local slotIndex = skeletonData:findSlotIndex(offsetMap["slot"])
+						if slotIndex == -1 then error("Slot not found: " + offsetMap["slot"]) end
+						-- Collect unchanged items.
+						while originalIndex ~= slotIndex do
+							unchanged[unchangedIndex] = originalIndex
+							unchangedIndex = unchangedIndex + 1
+							originalIndex = originalIndex + 1
+						end
+						-- Set changed items.
+						drawOrder[originalIndex + offsetMap["offset"]] = originalIndex
+						originalIndex = originalIndex + 1
+					end
+					-- Collect remaining unchanged items.
+					while originalIndex < slotCount do
+						unchanged[unchangedIndex] = originalIndex
+						unchangedIndex = unchangedIndex + 1
+						originalIndex = originalIndex + 1
+					end
+					-- Fill in unchanged items.
+					for ii = slotCount, 1, -1 do
+						if drawOrder[ii] == -1 then
+							drawOrder[ii] = unchanged[unchangedIndex]
+							unchangedIndex = unchangedIndex - 1
+						end
+					end
+				end
+				timeline:setFrame(frameIndex, drawOrderMap["time"], drawOrder)
+				frameIndex = frameIndex + 1
+			end
+			table.insert(timelines, timeline)
+			duration = math.max(duration, timeline:getDuration())
+		end
+
 		table.insert(skeletonData.animations, Animation.new(name, timelines, duration))
 	end
 
-	readCurve = function (timeline, keyframeIndex, valueMap)
+	readCurve = function (timeline, frameIndex, valueMap)
 		local curve = valueMap["curve"]
 		if not curve then return end
 		if curve == "stepped" then
-			timeline:setStepped(keyframeIndex)
+			timeline:setStepped(frameIndex)
 		else
-			timeline:setCurve(keyframeIndex, curve[1], curve[2], curve[3], curve[4])
+			timeline:setCurve(frameIndex, curve[1], curve[2], curve[3], curve[4])
 		end
 	end
 

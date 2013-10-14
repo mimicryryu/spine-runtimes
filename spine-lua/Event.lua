@@ -31,21 +31,17 @@
  -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ------------------------------------------------------------------------------
 
-local BoneData = {}
-function BoneData.new (name, parent)
-	if not name then error("name cannot be nil", 2) end
+local Event = {}
+function Event.new (data)
+	if not data then error("data cannot be nil", 2) end
 
 	local self = {
-		name = name,
-		parent = parent,
-		length = 0,
-		x = 0, y = 0,
-		rotation = 0,
-		scaleX = 1, scaleY = 1,
-		inheritScale = true,
-		inheritRotation = true
+		data = data,
+		intValue = 0,
+		floatValue = 0,
+		stringValue = nil
 	}
 
 	return self
 end
-return BoneData
+return Event

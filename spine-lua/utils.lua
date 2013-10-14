@@ -35,37 +35,31 @@ local utils = {}
 
 function tablePrint (tt, indent, done)
 	done = done or {}
-	indent = indent or 0
-	if type(tt) == "table" then
-		local sb = {}
-		for key, value in pairs (tt) do
-			table.insert(sb, string.rep (" ", indent)) -- indent it
-			if type (value) == "table" and not done [value] then
-				done [value] = true
-				table.insert(sb, "{\n");
-				table.insert(sb, tablePrint (value, indent + 2, done))
-				table.insert(sb, string.rep (" ", indent)) -- indent it
-				table.insert(sb, "}\n");
-			elseif "number" == type(key) then
-				table.insert(sb, string.format("\"%s\"\n", tostring(value)))
-			else
-				table.insert(sb, string.format(
-					"%s = \"%s\"\n", tostring (key), tostring(value)))
-			end
+	for key, value in pairs(tt) do
+		local spaces = string.rep (" ", indent)
+		if type(value) == "table" and not done [value] then
+			done [value] = true
+			print(spaces .. "{")
+			utils.print(value, indent + 2, done)
+			print(spaces .. "}")
+		else
+			io.write(spaces .. tostring(key) .. " = ")
+			utils.print(value, indent + 2, done)
 		end
-		return table.concat(sb)
-	else
-		return tt .. "\n"
 	end
 end
 
-function utils.print (value)
+function utils.print (value, indent, done)
+	indent = indent or 0
 	if "nil" == type(value) then
 		print(tostring(nil))
 	elseif "table" == type(value) then
-		print(tablePrint(value))
+		local spaces = string.rep (" ", indent)
+		print(spaces .. "{")
+		tablePrint(value, indent + 2)
+		print(spaces .. "}")
 	elseif "string" == type(value) then
-		print(value)
+		print("\"" .. value .. "\"")
 	else
 		print(tostring(value))
 	end
