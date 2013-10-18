@@ -129,11 +129,11 @@ void CCSkeleton::draw () {
 	CC_NODE_DRAW_SETUP();
 
 	ccGLBlendFunc(blendFunc.src, blendFunc.dst);
-	ccColor3B color = getColor();
+	ccColor3B color = getDisplayedColor(); //** Fixed by Mimicry. 2013-10-18
 	skeleton->r = color.r / (float)255;
 	skeleton->g = color.g / (float)255;
 	skeleton->b = color.b / (float)255;
-	skeleton->a = getOpacity() / (float)255;
+	skeleton->a = getDisplayedOpacity() / (float)255; //** Fixed by Mimicry. 2013-10-18
 	if (premultipliedAlpha) {
 		skeleton->r *= skeleton->a;
 		skeleton->g *= skeleton->a;
