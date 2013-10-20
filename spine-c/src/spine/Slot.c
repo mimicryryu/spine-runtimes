@@ -86,7 +86,8 @@ void spSlot_setToSetupPose (spSlot* self) {
 		}
 	}
 	spSlot_setAttachment(self, attachment);
-    CONST_CAST(spAttachment*, self->holdAttachment) = attachment; //** Added By Mimicry. 2013-10-11
+    CONST_CAST(spAttachment*, self->holdAttachment) = attachment; //** Added by Mimicry. 2013-10-11
+    self->isHold = false; //** Added by Mimicry. 2013-10-20
 }
 
 }} // namespace cocos2d { namespace extension {

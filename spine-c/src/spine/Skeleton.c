@@ -199,14 +199,17 @@ int spSkeleton_setAttachment (spSkeleton* self, const char* slotName, const char
 	for (i = 0; i < self->slotCount; ++i) {
 		spSlot *slot = self->slots[i];
 		if (strcmp(slot->data->name, slotName) == 0) {
-			if (!attachmentName)
+			if (!attachmentName) {
 				spSlot_setAttachment(slot, 0);
+                CONST_CAST(spAttachment*, slot->holdAttachment) = 0; //** Added by Mimicry. 2013-10-20
+            }
 			else {
 				spAttachment* attachment = spSkeleton_getAttachmentForSlotIndex(self, i, attachmentName);
 				if (!attachment) return 0;
 				spSlot_setAttachment(slot, attachment);
-                CONST_CAST(spAttachment*, slot->holdAttachment) = attachment; //** Added By Mimicry. 2013-10-11
+                CONST_CAST(spAttachment*, slot->holdAttachment) = attachment; //** Added by Mimicry. 2013-10-11
 			}
+            slot->isHold = true; //** Added by Mimicry. 2013-10-20
 			return 1;
 		}
 	}

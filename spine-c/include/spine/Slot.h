@@ -48,7 +48,8 @@ typedef struct spSlot {
 	spBone* const bone;
 	float r, g, b, a;
 	spAttachment* const attachment;
-    spAttachment* const holdAttachment; //** For holding attachment such as "weapon". Added By Mimicry. 2013-10-11
+    spAttachment* const holdAttachment; //** For manual attachment setting. Reserve a "holding" attachment (eg. weapon, slot equipment, etc.). Added By Mimicry. 2013-10-11
+    bool isHold; //** For manual attachment setting. All spSkeleton_setAttachment invoke will set this true. Default is false. Added By Mimicry. 2013-10-20
 } spSlot;
 
 spSlot* spSlot_create (spSlotData* data, struct spSkeleton* skeleton, spBone* bone);

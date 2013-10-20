@@ -484,8 +484,17 @@ void _spAttachmentTimeline_apply (const spTimeline* timeline, spSkeleton* skelet
         spSlot_setAttachment(skeleton->slots[self->slotIndex], 0); // Default invisible attachment
     }
     else {
-        spSlot_setAttachment(skeleton->slots[self->slotIndex],
-                             attachmentName ? ( skeleton->slots[self->slotIndex]->holdAttachment?skeleton->slots[self->slotIndex]->holdAttachment:spSkeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName) ) : 0);
+        if (attachmentName) {
+            if (skeleton->slots[self->slotIndex]->isHold) {
+                spSlot_setAttachment(skeleton->slots[self->slotIndex], skeleton->slots[self->slotIndex]->holdAttachment);
+            }
+            else {
+                spSlot_setAttachment(skeleton->slots[self->slotIndex], spSkeleton_getAttachmentForSlotIndex(skeleton, self->slotIndex, attachmentName));
+            }
+        }
+        else {
+            spSlot_setAttachment(skeleton->slots[self->slotIndex], 0);
+        }
     }//** <-- Added by Mimicry. 09-30-2013
 }
 
