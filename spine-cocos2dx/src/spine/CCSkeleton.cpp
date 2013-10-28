@@ -134,11 +134,13 @@ void CCSkeleton::draw () {
 	skeleton->g = color.g / (float)255;
 	skeleton->b = color.b / (float)255;
 	skeleton->a = getDisplayedOpacity() / (float)255; //** Fixed by Mimicry. 2013-10-18
+    /** Commented by Mimicry. 2013-10-28. Fix wrong multiple alpha premulitpling calculation
 	if (premultipliedAlpha) {
 		skeleton->r *= skeleton->a;
 		skeleton->g *= skeleton->a;
 		skeleton->b *= skeleton->a;
 	}
+    **/
 
 	int additive = 0;
 	CCTextureAtlas* textureAtlas = 0;
