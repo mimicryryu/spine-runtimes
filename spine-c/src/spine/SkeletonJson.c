@@ -37,7 +37,6 @@
 #include <spine/extension.h>
 #include <spine/RegionAttachment.h>
 #include <spine/AtlasAttachmentLoader.h>
-#include "cocos2d.h" //** Added by Mimicry.
 
 namespace cocos2d { namespace extension {
 
@@ -350,9 +349,9 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 		}
 
 		boneData = spBoneData_create(Json_getString(boneMap, "name", 0), parent);
-		boneData->length = Json_getFloat(boneMap, "length", 0) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
-		boneData->x = Json_getFloat(boneMap, "x", 0) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
-		boneData->y = Json_getFloat(boneMap, "y", 0) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
+		boneData->length = Json_getFloat(boneMap, "length", 0) * self->scale;
+		boneData->x = Json_getFloat(boneMap, "x", 0) * self->scale;
+		boneData->y = Json_getFloat(boneMap, "y", 0) * self->scale;
 		boneData->rotation = Json_getFloat(boneMap, "rotation", 0);
 		boneData->scaleX = Json_getFloat(boneMap, "scaleX", 1);
 		boneData->scaleY = Json_getFloat(boneMap, "scaleY", 1);
@@ -449,13 +448,13 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 					case ATTACHMENT_REGION:
 					case ATTACHMENT_REGION_SEQUENCE: {
 						spRegionAttachment* regionAttachment = (spRegionAttachment*)attachment;
-						regionAttachment->x = Json_getFloat(attachmentMap, "x", 0) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
-						regionAttachment->y = Json_getFloat(attachmentMap, "y", 0) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
+						regionAttachment->x = Json_getFloat(attachmentMap, "x", 0) * self->scale;
+						regionAttachment->y = Json_getFloat(attachmentMap, "y", 0) * self->scale;
 						regionAttachment->scaleX = Json_getFloat(attachmentMap, "scaleX", 1);
 						regionAttachment->scaleY = Json_getFloat(attachmentMap, "scaleY", 1);
 						regionAttachment->rotation = Json_getFloat(attachmentMap, "rotation", 0);
-						regionAttachment->width = Json_getFloat(attachmentMap, "width", 32) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
-						regionAttachment->height = Json_getFloat(attachmentMap, "height", 32) * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
+						regionAttachment->width = Json_getFloat(attachmentMap, "width", 32) * self->scale;
+						regionAttachment->height = Json_getFloat(attachmentMap, "height", 32) * self->scale;
 						spRegionAttachment_updateOffset(regionAttachment);
 						break;
 					}
@@ -467,7 +466,7 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 						box->verticesCount = verticesArray->size;
 						box->vertices = MALLOC(float, verticesArray->size);
 						for (vertex = verticesArray->child, i = 0; vertex; vertex = vertex->next, ++i)
-							box->vertices[i] = vertex->valueFloat * self->scale / CC_CONTENT_SCALE_FACTOR(); //** Modified by Mimicry.
+							box->vertices[i] = vertex->valueFloat * self->scale;
 						break;
 					}
 					}

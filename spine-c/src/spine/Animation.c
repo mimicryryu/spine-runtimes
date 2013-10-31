@@ -34,7 +34,6 @@
 #include <spine/Animation.h>
 #include <limits.h>
 #include <spine/extension.h>
-#include "cocos2d.h" //** Added by Mimicry. 2013-10-08
 
 namespace cocos2d { namespace extension {
 
@@ -321,8 +320,8 @@ void _spTranslateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleto
 	bone = skeleton->bones[self->boneIndex];
 
 	if (time >= self->frames[self->framesLength - 3]) { /* Time is after last frame. */
-		bone->x += (bone->data->x + self->frames[self->framesLength - 2]/CC_CONTENT_SCALE_FACTOR() - bone->x) * alpha; //** Modified by Mimicry. 2013-10-08
-		bone->y += (bone->data->y + self->frames[self->framesLength - 1]/CC_CONTENT_SCALE_FACTOR() - bone->y) * alpha; //** Modified by Mimicry. 2013-10-08
+		bone->x += (bone->data->x + self->frames[self->framesLength - 2] - bone->x) * alpha;
+		bone->y += (bone->data->y + self->frames[self->framesLength - 1] - bone->y) * alpha;
 		return;
 	}
 
@@ -334,10 +333,10 @@ void _spTranslateTimeline_apply (const spTimeline* timeline, spSkeleton* skeleto
 	percent = 1 - (time - frameTime) / (self->frames[frameIndex + TRANSLATE_LAST_FRAME_TIME] - frameTime);
 	percent = spCurveTimeline_getCurvePercent(SUPER(self), frameIndex / 3 - 1, percent < 0 ? 0 : (percent > 1 ? 1 : percent));
 
-	bone->x += (bone->data->x + lastFrameX/CC_CONTENT_SCALE_FACTOR() + (self->frames[frameIndex + TRANSLATE_FRAME_X] - lastFrameX)/CC_CONTENT_SCALE_FACTOR() * percent - bone->x)
-    * alpha; //** Modified by Mimicry. 2013-10-08
-	bone->y += (bone->data->y + lastFrameY/CC_CONTENT_SCALE_FACTOR() + (self->frames[frameIndex + TRANSLATE_FRAME_Y] - lastFrameY)/CC_CONTENT_SCALE_FACTOR() * percent - bone->y)
-    * alpha; //** Modified by Mimicry. 2013-10-08
+	bone->x += (bone->data->x + lastFrameX + (self->frames[frameIndex + TRANSLATE_FRAME_X] - lastFrameX) * percent - bone->x)
+    * alpha;
+	bone->y += (bone->data->y + lastFrameY + (self->frames[frameIndex + TRANSLATE_FRAME_Y] - lastFrameY) * percent - bone->y)
+    * alpha;
 }
 
 spTranslateTimeline* spTranslateTimeline_create (int frameCount) {
