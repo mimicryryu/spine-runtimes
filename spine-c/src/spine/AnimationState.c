@@ -80,12 +80,12 @@ spAnimationState* spAnimationState_create (spAnimationStateData* data) {
 }
 
 void spAnimationState_dispose (spAnimationState* self) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
+	FREE(internal->events);
 	int i;
 	for (i = 0; i < self->trackCount; i++)
 		_spTrackEntry_disposeAll(self->tracks[i]);
-    FREE(self->tracks); //** Added by Mimicry. 2013-10-31
-    _spAnimationState* internal = SUB_CAST(_spAnimationState, self); //** Added by Mimicry. 2013-10-31
-    FREE(internal->events); //** Added by Mimicry. 2013-10-31
+	FREE(self->tracks);
 	FREE(self);
 }
 
@@ -194,7 +194,7 @@ spTrackEntry* _spAnimationState_expandToIndex (spAnimationState* self, int index
 	if (index < self->trackCount) return self->tracks[index];
 	newTracks = CALLOC(spTrackEntry*, index + 1);
 	memcpy(newTracks, self->tracks, self->trackCount * sizeof(spTrackEntry*));
-    FREE(self->tracks); //** Added by Mimicry. 2013-10-31
+	FREE(self->tracks);
 	self->tracks = newTracks;
 	self->trackCount = index + 1;
 	return 0;
