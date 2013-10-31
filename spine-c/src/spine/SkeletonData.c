@@ -58,13 +58,6 @@ void spSkeletonData_dispose (spSkeletonData* self) {
 	for (i = 0; i < self->animationCount; ++i)
 		spAnimation_dispose(self->animations[i]);
 	FREE(self->animations);
-    
-    //** Added by Mimicry. 2013-10-13 -->
-    for (i = 0; i < self->eventCount; ++i) {
-        spEventData_dispose(self->events[i]);
-    }
-    FREE(self->events);
-    //** <-- Added by Mimicry. 2013-10-13
 
 	for (i = 0; i < self->eventCount; ++i)
 		spEventData_dispose(self->events[i]);
