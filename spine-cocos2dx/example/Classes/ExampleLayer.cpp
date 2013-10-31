@@ -27,10 +27,11 @@ bool ExampleLayer::init () {
 	skeletonNode->addAnimation(0, "jump", false);
 	skeletonNode->addAnimation(0, "walk", true);
 	skeletonNode->addAnimation(0, "jump", true, 4);
-	skeletonNode->addAnimation(1, "drawOrder", true);
+	// skeletonNode->addAnimation(1, "drawOrder", true);
 
 	// skeletonNode->timeScale = 0.3f;
 	skeletonNode->debugBones = true;
+	skeletonNode->update(0);
 
 	skeletonNode->runAction(CCRepeatForever::create(CCSequence::create(CCFadeOut::create(1),
 		CCFadeIn::create(1),
