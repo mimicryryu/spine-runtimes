@@ -40,7 +40,10 @@ public class AnimationState {
 	private var _data:AnimationStateData;
 	private var _tracks:Vector.<TrackEntry> = new Vector.<TrackEntry>();
 	private var _events:Vector.<Event> = new Vector.<Event>();
-	public var onStart:Function, onEnd:Function, onComplete:Function, onEvent:Function;
+	public var onStart:Listeners = new Listeners();
+	public var onEnd:Listeners = new Listeners();
+	public var onComplete:Listeners = new Listeners();
+	public var onEvent:Listeners = new Listeners();
 	public var timeScale:Number = 1;
 
 	public function AnimationState (data:AnimationStateData) {
@@ -102,14 +105,14 @@ public class AnimationState {
 			
 			for each (var event:Event in _events) {
 				if (current.onEvent != null) current.onEvent(i, event);
-				if (onEvent != null) onEvent(i, event);
+				onEvent.invoke(i, event);
 			}
 
 			// Check if completed the animation or a loop iteration.
 			if (loop ? (lastTime % endTime > time % endTime) : (lastTime < endTime && time >= endTime)) {
 				var count:int = (int)(time / endTime);
 				if (current.onComplete != null) current.onComplete(i, count);
-				if (onComplete != null) onComplete(i, count);
+				onComplete.invoke(i, count);
 			}
 
 			current.lastTime = current.time;
@@ -128,7 +131,7 @@ public class AnimationState {
 		if (!current) return;
 		
 		if (current.onEnd != null) current.onEnd(trackIndex);
-		if (onEnd != null) onEnd(trackIndex);
+		onEnd.invoke(trackIndex);
 
 		_tracks[trackIndex] = null;
 	}
@@ -136,29 +139,35 @@ public class AnimationState {
 	private function expandToIndex (index:int) : TrackEntry {
 		if (index < _tracks.length) return _tracks[index];
 		while (index >= _tracks.length)
-			_tracks.push(null);
+			_tracks[_tracks.length] = null;
 		return null;
 	}
 	
 	private function setCurrent (index:int, entry:TrackEntry) : void {
 		var current:TrackEntry = expandToIndex(index);
 		if (current) {
+			var previous:TrackEntry = current.previous;
 			current.previous = null;
-			
+
 			if (current.onEnd != null) current.onEnd(index);
-			if (onEnd != null) onEnd(index);
-			
+			onEnd.invoke(index);
+
 			entry.mixDuration = _data.getMix(current.animation, entry.animation);
 			if (entry.mixDuration > 0) {
 				entry.mixTime = 0;
-				entry.previous = current;
+				// If a mix is in progress, mix from the closest animation.
+				if (previous != null && current.mixTime / current.mixDuration < 0.5) {
+					entry.previous = previous;
+					previous = current;
+				} else
+					entry.previous = current;
 			}
 		}
 		
 		_tracks[index] = entry;
-		
+
 		if (entry.onStart != null) entry.onStart(index);
-		if (onStart != null) onStart(index);
+		onStart.invoke(index);
 	}
 	
 	public function setAnimationByName (trackIndex:int, animationName:String, loop:Boolean) : TrackEntry {

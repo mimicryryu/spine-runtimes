@@ -31,52 +31,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-package spine.animation {
-import spine.Event;
-import spine.Skeleton;
-import spine.Slot;
+package com.esotericsoftware.spine.attachments;
 
-public class DrawOrderTimeline implements Timeline {
-	public var frames:Vector.<Number> = new Vector.<Number>(); // time, ...
-	public var drawOrders:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
+import com.esotericsoftware.spine.Skeleton;
 
-	public function DrawOrderTimeline (frameCount:int) {
-		frames.length = frameCount;
-		drawOrders.length = frameCount;
+/** Attachment that displays a texture region. */
+public class SkeletonAttachment extends Attachment {
+	private Skeleton skeleton;
+
+	public SkeletonAttachment (String name) {
+		super(name);
 	}
 
-	public function get frameCount () : int {
-		return frames.length;
+	/** @return May return null. */
+	public Skeleton getSkeleton () {
+		return skeleton;
 	}
 
-	/** Sets the time and value of the specified keyframe. */
-	public function setFrame (frameIndex:int, time:Number, drawOrder:Vector.<int>) : void {
-		frames[frameIndex] = time;
-		drawOrders[frameIndex] = drawOrder;
+	/** @param skeleton May be null. */
+	public void setSkeleton (Skeleton skeleton) {
+		this.skeleton = skeleton;
 	}
-
-	public function apply (skeleton:Skeleton, lastTime:Number, time:Number, firedEvents:Vector.<Event>, alpha:Number) : void {
-		if (time < frames[0])
-			return; // Time is before first frame.
-
-		var frameIndex:int;
-		if (time >= frames[int(frames.length - 1)]) // Time is after last frame.
-			frameIndex = frames.length - 1;
-		else
-			frameIndex = Animation.binarySearch(frames, time, 1) - 1;
-
-		var drawOrder:Vector.<Slot> = skeleton.drawOrder;
-		var slots:Vector.<Slot> = skeleton.slots;
-		var drawOrderToSetupIndex:Vector.<int> = drawOrders[frameIndex];
-		var i:int = 0;
-		if (!drawOrderToSetupIndex) {
-			for each (var slot:Slot in skeleton.slots)
-				drawOrder[i++] = slot;
-		} else {
-			for each (var setupIndex:int in drawOrderToSetupIndex) 
-				drawOrder[i++] = skeleton.slots[setupIndex];
-		}
-	}
-}
-
 }

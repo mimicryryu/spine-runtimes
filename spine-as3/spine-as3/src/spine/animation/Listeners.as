@@ -32,51 +32,28 @@
  *****************************************************************************/
 
 package spine.animation {
-import spine.Event;
-import spine.Skeleton;
-import spine.Slot;
+	public class Listeners {
+		private var _listeners:Vector.<Function> = new Vector.<Function>();
+		
+		public function get listeners () : Vector.<Function> {
+			return _listeners;
+		}
+		
+		public function add (listener:Function) : void {
+			if (listener == null)
+				throw new ArgumentError("listener cannot be null.");
+			_listeners[_listeners.length] = listener;
+		}
 
-public class DrawOrderTimeline implements Timeline {
-	public var frames:Vector.<Number> = new Vector.<Number>(); // time, ...
-	public var drawOrders:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
+		public function remove (listener:Function) : void {
+			if (listener == null)
+				throw new ArgumentError("listener cannot be null.");
+			_listeners.splice(_listeners.indexOf(listener), 1);
+		}
 
-	public function DrawOrderTimeline (frameCount:int) {
-		frames.length = frameCount;
-		drawOrders.length = frameCount;
-	}
-
-	public function get frameCount () : int {
-		return frames.length;
-	}
-
-	/** Sets the time and value of the specified keyframe. */
-	public function setFrame (frameIndex:int, time:Number, drawOrder:Vector.<int>) : void {
-		frames[frameIndex] = time;
-		drawOrders[frameIndex] = drawOrder;
-	}
-
-	public function apply (skeleton:Skeleton, lastTime:Number, time:Number, firedEvents:Vector.<Event>, alpha:Number) : void {
-		if (time < frames[0])
-			return; // Time is before first frame.
-
-		var frameIndex:int;
-		if (time >= frames[int(frames.length - 1)]) // Time is after last frame.
-			frameIndex = frames.length - 1;
-		else
-			frameIndex = Animation.binarySearch(frames, time, 1) - 1;
-
-		var drawOrder:Vector.<Slot> = skeleton.drawOrder;
-		var slots:Vector.<Slot> = skeleton.slots;
-		var drawOrderToSetupIndex:Vector.<int> = drawOrders[frameIndex];
-		var i:int = 0;
-		if (!drawOrderToSetupIndex) {
-			for each (var slot:Slot in skeleton.slots)
-				drawOrder[i++] = slot;
-		} else {
-			for each (var setupIndex:int in drawOrderToSetupIndex) 
-				drawOrder[i++] = skeleton.slots[setupIndex];
+		public function invoke (... args:*) : void {
+			for each (var listener:Function in _listeners)
+				listener.apply(null, args);
 		}
 	}
-}
-
 }

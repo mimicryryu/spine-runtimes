@@ -34,7 +34,9 @@
 package com.esotericsoftware.spine;
 
 import com.esotericsoftware.spine.attachments.Attachment;
+import com.esotericsoftware.spine.attachments.MeshAttachment;
 import com.esotericsoftware.spine.attachments.RegionAttachment;
+import com.esotericsoftware.spine.attachments.SkeletonAttachment;
 
 import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.Texture;
@@ -67,18 +69,48 @@ public class SkeletonRenderer {
 				vertices = region.getWorldVertices();
 				triangles = quadTriangle;
 				texture = region.getRegion().getTexture();
-			} else
-				continue;
 
-			if (slot.data.getAdditiveBlending() != additive) {
-				additive = !additive;
-				if (additive)
-					batch.setBlendFunction(srcFunc, GL11.GL_ONE);
-				else
-					batch.setBlendFunction(srcFunc, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				if (slot.data.getAdditiveBlending() != additive) {
+					additive = !additive;
+					if (additive)
+						batch.setBlendFunction(srcFunc, GL11.GL_ONE);
+					else
+						batch.setBlendFunction(srcFunc, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				}
+
+				batch.draw(texture, vertices, 0, vertices.length, triangles, 0, triangles.length);
+
+			} else if (attachment instanceof MeshAttachment) {
+				MeshAttachment mesh = (MeshAttachment)attachment;
+				mesh.updateWorldVertices(slot, true);
+				vertices = mesh.getWorldVertices();
+				triangles = mesh.getTriangles();
+				texture = mesh.getRegion().getTexture();
+				batch.draw(texture, vertices, 0, vertices.length, triangles, 0, triangles.length);
+
+			} else if (attachment instanceof SkeletonAttachment) {
+				Skeleton attachmentSkeleton = ((SkeletonAttachment)attachment).getSkeleton();
+				if (attachmentSkeleton == null) continue;
+				Bone bone = slot.getBone();
+				Bone rootBone = attachmentSkeleton.getRootBone();
+				float oldScaleX = rootBone.getScaleX();
+				float oldScaleY = rootBone.getScaleY();
+				float oldRotation = rootBone.getRotation();
+				attachmentSkeleton.setX(bone.getWorldX());
+				attachmentSkeleton.setY(bone.getWorldY());
+				rootBone.setScaleX(1 + bone.getWorldScaleX() - oldScaleX);
+				rootBone.setScaleY(1 + bone.getWorldScaleY() - oldScaleY);
+				rootBone.setRotation(oldRotation + bone.getWorldRotation());
+				attachmentSkeleton.updateWorldTransform();
+
+				draw(batch, attachmentSkeleton);
+
+				attachmentSkeleton.setX(0);
+				attachmentSkeleton.setY(0);
+				rootBone.setScaleX(oldScaleX);
+				rootBone.setScaleY(oldScaleY);
+				rootBone.setRotation(oldRotation);
 			}
-
-			batch.draw(texture, vertices, 0, vertices.length, triangles, 0, triangles.length);
 		}
 	}
 
@@ -105,6 +137,28 @@ public class SkeletonRenderer {
 						batch.setBlendFunction(srcFunc, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				}
 				batch.draw(regionAttachment.getRegion().getTexture(), vertices, 0, 20);
+			} else if (attachment instanceof SkeletonAttachment) {
+				Skeleton attachmentSkeleton = ((SkeletonAttachment)attachment).getSkeleton();
+				if (attachmentSkeleton == null) continue;
+				Bone bone = slot.getBone();
+				Bone rootBone = attachmentSkeleton.getRootBone();
+				float oldScaleX = rootBone.getScaleX();
+				float oldScaleY = rootBone.getScaleY();
+				float oldRotation = rootBone.getRotation();
+				attachmentSkeleton.setX(bone.getWorldX());
+				attachmentSkeleton.setY(bone.getWorldY());
+				rootBone.setScaleX(1 + bone.getWorldScaleX() - oldScaleX);
+				rootBone.setScaleY(1 + bone.getWorldScaleY() - oldScaleY);
+				rootBone.setRotation(oldRotation + bone.getWorldRotation());
+				attachmentSkeleton.updateWorldTransform();
+
+				draw(batch, attachmentSkeleton);
+
+				attachmentSkeleton.setX(0);
+				attachmentSkeleton.setY(0);
+				rootBone.setScaleX(oldScaleX);
+				rootBone.setScaleY(oldScaleY);
+				rootBone.setRotation(oldRotation);
 			}
 		}
 	}
