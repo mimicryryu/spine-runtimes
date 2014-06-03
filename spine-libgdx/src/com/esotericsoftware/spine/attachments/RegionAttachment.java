@@ -1,34 +1,31 @@
 /******************************************************************************
- * Spine Runtime Software License - Version 1.1
+ * Spine Runtimes Software License
+ * Version 2.1
  * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms in whole or in part, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * You are granted a perpetual, non-exclusive, non-sublicensable and
+ * non-transferable license to install, execute and perform the Spine Runtimes
+ * Software (the "Software") solely for internal use. Without the written
+ * permission of Esoteric Software (typically granted by licensing Spine), you
+ * may not (a) modify, translate, adapt or otherwise create derivative works,
+ * improvements of the Software or develop new applications using the Software
+ * or (b) remove, delete, alter or obscure any trademarks or any copyright,
+ * trademark, patent or other intellectual property or proprietary rights
+ * notices on or in the Software, including any copy thereof. Redistributions
+ * in binary or source form must include this license and terms.
  * 
- * 1. A Spine Essential, Professional, Enterprise, or Education License must
- *    be purchased from Esoteric Software and the license must remain valid:
- *    http://esotericsoftware.com/
- * 2. Redistributions of source code must retain this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer.
- * 3. Redistributions in binary form must reproduce this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer, in the documentation and/or other materials provided with the
- *    distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine.attachments;
@@ -141,7 +138,6 @@ public class RegionAttachment extends Attachment {
 			vertices[U1] = region.getU2();
 			vertices[V1] = region.getV2();
 		}
-		updateOffset();
 	}
 
 	public TextureRegion getRegion () {
@@ -154,36 +150,21 @@ public class RegionAttachment extends Attachment {
 		Color skeletonColor = skeleton.getColor();
 		Color slotColor = slot.getColor();
 		Color regionColor = color;
-		float r = skeletonColor.r * slotColor.r * regionColor.r;
-		float g = skeletonColor.g * slotColor.g * regionColor.g;
-		float b = skeletonColor.b * slotColor.b * regionColor.b;
 		float a = skeletonColor.a * slotColor.a * regionColor.a * 255;
-		float color;
-		if (premultipliedAlpha) {
-			r *= a;
-			g *= a;
-			b *= a;
-		} else {
-			r *= 255;
-			g *= 255;
-			b *= 255;
-		}
-		color = NumberUtils.intToFloatColor( //
-			((int)(a) << 24) //
-				| ((int)(b) << 16) //
-				| ((int)(g) << 8) //
-				| ((int)(r)));
+		float multiplier = premultipliedAlpha ? a : 255;
+		float color = NumberUtils.intToFloatColor( //
+			((int)a << 24) //
+				| ((int)(skeletonColor.b * slotColor.b * regionColor.b * multiplier) << 16) //
+				| ((int)(skeletonColor.g * slotColor.g * regionColor.g * multiplier) << 8) //
+				| (int)(skeletonColor.r * slotColor.r * regionColor.r * multiplier));
 
 		float[] vertices = this.vertices;
 		float[] offset = this.offset;
 		Bone bone = slot.getBone();
-		float x = bone.getWorldX() + skeleton.getX();
-		float y = bone.getWorldY() + skeleton.getY();
-		float m00 = bone.getM00();
-		float m01 = bone.getM01();
-		float m10 = bone.getM10();
-		float m11 = bone.getM11();
+		float x = skeleton.getX() + bone.getWorldX(), y = skeleton.getY() + bone.getWorldY();
+		float m00 = bone.getM00(), m01 = bone.getM01(), m10 = bone.getM10(), m11 = bone.getM11();
 		float offsetX, offsetY;
+
 		offsetX = offset[BRX];
 		offsetY = offset[BRY];
 		vertices[X1] = offsetX * m00 + offsetY * m01 + x; // br

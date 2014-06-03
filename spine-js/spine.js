@@ -1,34 +1,31 @@
 /******************************************************************************
- * Spine Runtime Software License - Version 1.1
+ * Spine Runtimes Software License
+ * Version 2.1
  * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms in whole or in part, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * You are granted a perpetual, non-exclusive, non-sublicensable and
+ * non-transferable license to install, execute and perform the Spine Runtimes
+ * Software (the "Software") solely for internal use. Without the written
+ * permission of Esoteric Software (typically granted by licensing Spine), you
+ * may not (a) modify, translate, adapt or otherwise create derivative works,
+ * improvements of the Software or develop new applications using the Software
+ * or (b) remove, delete, alter or obscure any trademarks or any copyright,
+ * trademark, patent or other intellectual property or proprietary rights
+ * notices on or in the Software, including any copy thereof. Redistributions
+ * in binary or source form must include this license and terms.
  * 
- * 1. A Spine Essential, Professional, Enterprise, or Education License must
- *    be purchased from Esoteric Software and the license must remain valid:
- *    http://esotericsoftware.com/
- * 2. Redistributions of source code must retain this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer.
- * 3. Redistributions in binary form must reproduce this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer, in the documentation and/or other materials provided with the
- *    distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 var spine = {};
@@ -85,7 +82,7 @@ spine.Bone.prototype = {
 			this.worldRotation = this.data.inheritRotation ? parent.worldRotation + this.rotation : this.rotation;
 		} else {
 			this.worldX = flipX ? -this.x : this.x;
-			this.worldY = (flipY && spine.Bone.yDown != flipY) ? -this.y : this.y;
+			this.worldY = flipY != spine.Bone.yDown ? -this.y : this.y;
 			this.worldScaleX = this.scaleX;
 			this.worldScaleY = this.scaleY;
 			this.worldRotation = this.rotation;
@@ -708,8 +705,11 @@ spine.Skeleton.prototype = {
 	},
 	setSlotsToSetupPose: function () {
 		var slots = this.slots;
-		for (var i = 0, n = slots.length; i < n; i++)
+		var drawOrder = this.drawOrder;
+		for (var i = 0, n = slots.length; i < n; i++) {
+			drawOrder[i] = slots[i];
 			slots[i].setToSetupPose(i);
+		}
 	},
 	/** @return May return null. */
 	getRootBone: function () {
@@ -771,7 +771,7 @@ spine.Skeleton.prototype = {
 	/** @param attachmentName May be null. */
 	setAttachment: function (slotName, attachmentName) {
 		var slots = this.slots;
-		for (var i = 0, n = slots.size; i < n; i++) {
+		for (var i = 0, n = slots.length; i < n; i++) {
 			var slot = slots[i];
 			if (slot.data.name == slotName) {
 				var attachment = null;
@@ -786,13 +786,13 @@ spine.Skeleton.prototype = {
 		throw "Slot not found: " + slotName;
 	},
 	update: function (delta) {
-		time += delta;
+		this.time += delta;
 	}
 };
 
 spine.EventData = function (name) {
 	this.name = name;
-}
+};
 spine.EventData.prototype = {
 	intValue: 0,
 	floatValue: 0,
@@ -801,7 +801,7 @@ spine.EventData.prototype = {
 
 spine.Event = function (data) {
 	this.data = data;
-}
+};
 spine.Event.prototype = {
 	intValue: 0,
 	floatValue: 0,
@@ -951,9 +951,9 @@ spine.TrackEntry.prototype = {
 	loop: false,
 	delay: 0, time: 0, lastTime: -1, endTime: 0,
 	timeScale: 1,
-	mixTime: 0, mixDuration: 0,
+	mixTime: 0, mixDuration: 0, mix: 1,
 	onStart: null, onEnd: null, onComplete: null, onEvent: null
-}
+};
 
 spine.AnimationState = function (stateData) {
 	this.data = stateData;
@@ -1002,14 +1002,17 @@ spine.AnimationState.prototype = {
 			if (!loop && time > endTime) time = endTime;
 
 			var previous = current.previous;
-			if (!previous)
-				current.animation.apply(skeleton, current.lastTime, time, loop, this.events);
-			else {
+			if (!previous) {
+				if (current.mix == 1)
+					current.animation.apply(skeleton, current.lastTime, time, loop, this.events);
+				else
+					current.animation.mix(skeleton, current.lastTime, time, loop, this.events, current.mix);
+			} else {
 				var previousTime = previous.time;
 				if (!previous.loop && previousTime > previous.endTime) previousTime = previous.endTime;
 				previous.animation.apply(skeleton, previousTime, previousTime, previous.loop, null);
 
-				var alpha = current.mixTime / current.mixDuration;
+				var alpha = current.mixTime / current.mixDuration * current.mix;
 				if (alpha >= 1) {
 					alpha = 1;
 					current.previous = null;
@@ -1241,7 +1244,7 @@ spine.SkeletonJson.prototype = {
 		} else if (type == spine.AttachmentType.boundingBox) {
 			var vertices = map["vertices"];
 			for (var i = 0, n = vertices.length; i < n; i++)
-				attachment.vertices.push(vertices[i] * scale);
+				attachment.vertices.push(vertices[i] * this.scale);
 		}
 
 		return attachment;
@@ -1440,7 +1443,12 @@ spine.Atlas = function (atlasText, textureLoader) {
 			page = new spine.AtlasPage();
 			page.name = line;
 
-			page.format = spine.Atlas.Format[reader.readValue()];
+			if (reader.readTuple(tuple) == 2) { // size is only optional for an atlas packed with an old TexturePacker.
+				page.width = parseInt(tuple[0]);
+				page.height = parseInt(tuple[1]);
+				reader.readTuple(tuple);
+			}
+			page.format = spine.Atlas.Format[tuple[0]];
 
 			reader.readTuple(tuple);
 			page.minFilter = spine.Atlas.TextureFilter[tuple[0]];
@@ -1593,7 +1601,7 @@ spine.AtlasRegion.prototype = {
 	index: 0,
 	rotate: false,
 	splits: null,
-	pads: null,
+	pads: null
 };
 
 spine.AtlasReader = function (text) {
@@ -1614,18 +1622,15 @@ spine.AtlasReader.prototype = {
 		if (colon == -1) throw "Invalid line: " + line;
 		return this.trim(line.substring(colon + 1));
 	},
-	/** Returns the number of tuple values read (2 or 4). */
+	/** Returns the number of tuple values read (1, 2 or 4). */
 	readTuple: function (tuple) {
 		var line = this.readLine();
 		var colon = line.indexOf(":");
 		if (colon == -1) throw "Invalid line: " + line;
-		var i = 0, lastMatch= colon + 1;
+		var i = 0, lastMatch = colon + 1;
 		for (; i < 3; i++) {
 			var comma = line.indexOf(",", lastMatch);
-			if (comma == -1) {
-				if (i == 0) throw "Invalid line: " + line;
-				break;
-			}
+			if (comma == -1) break;
 			tuple[i] = this.trim(line.substr(lastMatch, comma - lastMatch));
 			lastMatch = comma + 1;
 		}
@@ -1686,7 +1691,7 @@ spine.SkeletonBounds.prototype = {
 			if (boundingBox.type != spine.AttachmentType.boundingBox) continue;
 			boundingBoxes.push(boundingBox);
 
-			var poolCount = polygonPool.length;
+			var poolCount = polygonPool.length, polygon;
 			if (poolCount > 0) {
 				polygon = polygonPool[poolCount - 1];
 				polygonPool.splice(poolCount - 1, 1);
@@ -1756,7 +1761,7 @@ spine.SkeletonBounds.prototype = {
 	intersectsSegment: function (x1, y1, x2, y2) {
 		var polygons = this.polygons;
 		for (var i = 0, n = polygons.length; i < n; i++)
-			if (polygons[i].intersectsSegment(x1, y1, x2, y2)) return boundingBoxes[i];
+			if (polygons[i].intersectsSegment(x1, y1, x2, y2)) return this.boundingBoxes[i];
 		return null;
 	},
 	/** Returns true if the polygon contains the point. */
@@ -1776,7 +1781,7 @@ spine.SkeletonBounds.prototype = {
 		return inside;
 	},
 	/** Returns true if the polygon contains the line segment. */
-	intersectsSegment: function (polygon, x1, y1, x2, y2) {
+	polygonIntersectsSegment: function (polygon, x1, y1, x2, y2) {
 		var nn = polygon.length;
 		var width12 = x1 - x2, height12 = y1 - y2;
 		var det1 = x1 * y2 - y1 * x2;

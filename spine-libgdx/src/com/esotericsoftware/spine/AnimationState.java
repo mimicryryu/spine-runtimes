@@ -1,34 +1,31 @@
 /******************************************************************************
- * Spine Runtime Software License - Version 1.1
+ * Spine Runtimes Software License
+ * Version 2.1
  * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms in whole or in part, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * You are granted a perpetual, non-exclusive, non-sublicensable and
+ * non-transferable license to install, execute and perform the Spine Runtimes
+ * Software (the "Software") solely for internal use. Without the written
+ * permission of Esoteric Software (typically granted by licensing Spine), you
+ * may not (a) modify, translate, adapt or otherwise create derivative works,
+ * improvements of the Software or develop new applications using the Software
+ * or (b) remove, delete, alter or obscure any trademarks or any copyright,
+ * trademark, patent or other intellectual property or proprietary rights
+ * notices on or in the Software, including any copy thereof. Redistributions
+ * in binary or source form must include this license and terms.
  * 
- * 1. A Spine Essential, Professional, Enterprise, or Education License must
- *    be purchased from Esoteric Software and the license must remain valid:
- *    http://esotericsoftware.com/
- * 2. Redistributions of source code must retain this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer.
- * 3. Redistributions in binary form must reproduce this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer, in the documentation and/or other materials provided with the
- *    distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine;
@@ -62,11 +59,11 @@ public class AnimationState {
 			TrackEntry current = tracks.get(i);
 			if (current == null) continue;
 
-			float trackDelta = delta * current.timeScale;
-			current.time += trackDelta;
+			current.time += delta * current.timeScale;
 			if (current.previous != null) {
-				current.previous.time += trackDelta;
-				current.mixTime += trackDelta;
+				float previousDelta = delta * current.previous.timeScale;
+				current.previous.time += previousDelta;
+				current.mixTime += previousDelta;
 			}
 
 			TrackEntry next = current.next;
@@ -96,14 +93,17 @@ public class AnimationState {
 			if (!loop && time > endTime) time = endTime;
 
 			TrackEntry previous = current.previous;
-			if (previous == null)
-				current.animation.apply(skeleton, lastTime, time, loop, events);
-			else {
+			if (previous == null) {
+				if (current.mix == 1)
+					current.animation.apply(skeleton, lastTime, time, loop, events);
+				else
+					current.animation.mix(skeleton, lastTime, time, loop, events, current.mix);
+			} else {
 				float previousTime = previous.time;
 				if (!previous.loop && previousTime > previous.endTime) previousTime = previous.endTime;
 				previous.animation.apply(skeleton, previousTime, previousTime, previous.loop, null);
 
-				float alpha = current.mixTime / current.mixDuration;
+				float alpha = current.mixTime / current.mixDuration * current.mix;
 				if (alpha >= 1) {
 					alpha = 1;
 					trackEntryPool.free(previous);
@@ -147,6 +147,7 @@ public class AnimationState {
 			listeners.get(i).end(trackIndex);
 
 		tracks.set(trackIndex, null);
+
 		freeAll(current);
 		if (current.previous != null) trackEntryPool.free(current.previous);
 	}
@@ -281,6 +282,11 @@ public class AnimationState {
 		return data;
 	}
 
+	/** Returns the list of tracks that have animations, which may contain nulls. */
+	public Array<TrackEntry> getTracks () {
+		return tracks;
+	}
+
 	public String toString () {
 		StringBuilder buffer = new StringBuilder(64);
 		for (int i = 0, n = tracks.size; i < n; i++) {
@@ -300,6 +306,7 @@ public class AnimationState {
 		float delay, time, lastTime, endTime, timeScale = 1;
 		float mixTime, mixDuration;
 		AnimationStateListener listener;
+		float mix = 1;
 
 		public void reset () {
 			next = null;
@@ -365,6 +372,14 @@ public class AnimationState {
 
 		public void setLastTime (float lastTime) {
 			this.lastTime = lastTime;
+		}
+
+		public float getMix () {
+			return mix;
+		}
+
+		public void setMix (float mix) {
+			this.mix = mix;
 		}
 
 		public float getTimeScale () {

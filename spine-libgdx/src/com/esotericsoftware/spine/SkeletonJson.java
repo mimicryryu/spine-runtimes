@@ -1,34 +1,31 @@
 /******************************************************************************
- * Spine Runtime Software License - Version 1.1
+ * Spine Runtimes Software License
+ * Version 2.1
  * 
  * Copyright (c) 2013, Esoteric Software
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms in whole or in part, with
- * or without modification, are permitted provided that the following conditions
- * are met:
+ * You are granted a perpetual, non-exclusive, non-sublicensable and
+ * non-transferable license to install, execute and perform the Spine Runtimes
+ * Software (the "Software") solely for internal use. Without the written
+ * permission of Esoteric Software (typically granted by licensing Spine), you
+ * may not (a) modify, translate, adapt or otherwise create derivative works,
+ * improvements of the Software or develop new applications using the Software
+ * or (b) remove, delete, alter or obscure any trademarks or any copyright,
+ * trademark, patent or other intellectual property or proprietary rights
+ * notices on or in the Software, including any copy thereof. Redistributions
+ * in binary or source form must include this license and terms.
  * 
- * 1. A Spine Essential, Professional, Enterprise, or Education License must
- *    be purchased from Esoteric Software and the license must remain valid:
- *    http://esotericsoftware.com/
- * 2. Redistributions of source code must retain this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer.
- * 3. Redistributions in binary form must reproduce this license, which is the
- *    above copyright notice, this declaration of conditions and the following
- *    disclaimer, in the documentation and/or other materials provided with the
- *    distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine;
@@ -38,6 +35,7 @@ import com.esotericsoftware.spine.Animation.ColorTimeline;
 import com.esotericsoftware.spine.Animation.CurveTimeline;
 import com.esotericsoftware.spine.Animation.DrawOrderTimeline;
 import com.esotericsoftware.spine.Animation.EventTimeline;
+import com.esotericsoftware.spine.Animation.FfdTimeline;
 import com.esotericsoftware.spine.Animation.RotateTimeline;
 import com.esotericsoftware.spine.Animation.ScaleTimeline;
 import com.esotericsoftware.spine.Animation.Timeline;
@@ -49,22 +47,19 @@ import com.esotericsoftware.spine.attachments.AttachmentType;
 import com.esotericsoftware.spine.attachments.BoundingBoxAttachment;
 import com.esotericsoftware.spine.attachments.MeshAttachment;
 import com.esotericsoftware.spine.attachments.RegionAttachment;
+import com.esotericsoftware.spine.attachments.SkinnedMeshAttachment;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.SerializationException;
 
 public class SkeletonJson {
-	static public final String TIMELINE_SCALE = "scale";
-	static public final String TIMELINE_ROTATE = "rotate";
-	static public final String TIMELINE_TRANSLATE = "translate";
-	static public final String TIMELINE_ATTACHMENT = "attachment";
-	static public final String TIMELINE_COLOR = "color";
-
 	private final AttachmentLoader attachmentLoader;
 	private float scale = 1;
 
@@ -88,13 +83,15 @@ public class SkeletonJson {
 	public SkeletonData readSkeletonData (FileHandle file) {
 		if (file == null) throw new IllegalArgumentException("file cannot be null.");
 
+		float scale = this.scale;
+
 		SkeletonData skeletonData = new SkeletonData();
 		skeletonData.name = file.nameWithoutExtension();
 
 		JsonValue root = new JsonReader().parse(file);
 
 		// Bones.
-		for (JsonValue boneMap = root.getChild("bones"); boneMap != null; boneMap = boneMap.next()) {
+		for (JsonValue boneMap = root.getChild("bones"); boneMap != null; boneMap = boneMap.next) {
 			BoneData parent = null;
 			String parentName = boneMap.getString("parent", null);
 			if (parentName != null) {
@@ -110,11 +107,15 @@ public class SkeletonJson {
 			boneData.scaleY = boneMap.getFloat("scaleY", 1);
 			boneData.inheritScale = boneMap.getBoolean("inheritScale", true);
 			boneData.inheritRotation = boneMap.getBoolean("inheritRotation", true);
+
+			String color = boneMap.getString("color", null);
+			if (color != null) boneData.getColor().set(Color.valueOf(color));
+
 			skeletonData.addBone(boneData);
 		}
 
 		// Slots.
-		for (JsonValue slotMap = root.getChild("slots"); slotMap != null; slotMap = slotMap.next()) {
+		for (JsonValue slotMap = root.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
 			String slotName = slotMap.getString("name");
 			String boneName = slotMap.getString("bone");
 			BoneData boneData = skeletonData.findBone(boneName);
@@ -132,14 +133,14 @@ public class SkeletonJson {
 		}
 
 		// Skins.
-		for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next()) {
-			Skin skin = new Skin(skinMap.name());
-			for (JsonValue slotEntry = skinMap.child(); slotEntry != null; slotEntry = slotEntry.next()) {
-				int slotIndex = skeletonData.findSlotIndex(slotEntry.name());
-				if (slotIndex == -1) throw new SerializationException("Slot not found: " + slotEntry.name());
-				for (JsonValue entry = slotEntry.child(); entry != null; entry = entry.next()) {
-					Attachment attachment = readAttachment(skin, entry.name(), entry);
-					if (attachment != null) skin.addAttachment(slotIndex, entry.name(), attachment);
+		for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
+			Skin skin = new Skin(skinMap.name);
+			for (JsonValue slotEntry = skinMap.child; slotEntry != null; slotEntry = slotEntry.next) {
+				int slotIndex = skeletonData.findSlotIndex(slotEntry.name);
+				if (slotIndex == -1) throw new SerializationException("Slot not found: " + slotEntry.name);
+				for (JsonValue entry = slotEntry.child; entry != null; entry = entry.next) {
+					Attachment attachment = readAttachment(skin, entry.name, entry);
+					if (attachment != null) skin.addAttachment(slotIndex, entry.name, attachment);
 				}
 			}
 			skeletonData.addSkin(skin);
@@ -147,8 +148,8 @@ public class SkeletonJson {
 		}
 
 		// Events.
-		for (JsonValue eventMap = root.getChild("events"); eventMap != null; eventMap = eventMap.next()) {
-			EventData eventData = new EventData(eventMap.name());
+		for (JsonValue eventMap = root.getChild("events"); eventMap != null; eventMap = eventMap.next) {
+			EventData eventData = new EventData(eventMap.name);
 			eventData.intValue = eventMap.getInt("int", 0);
 			eventData.floatValue = eventMap.getFloat("float", 0f);
 			eventData.stringValue = eventMap.getString("string", null);
@@ -156,8 +157,8 @@ public class SkeletonJson {
 		}
 
 		// Animations.
-		for (JsonValue animationMap = root.getChild("animations"); animationMap != null; animationMap = animationMap.next())
-			readAnimation(animationMap.name(), animationMap, skeletonData);
+		for (JsonValue animationMap = root.getChild("animations"); animationMap != null; animationMap = animationMap.next)
+			readAnimation(animationMap.name, animationMap, skeletonData);
 
 		skeletonData.bones.shrink();
 		skeletonData.slots.shrink();
@@ -167,11 +168,15 @@ public class SkeletonJson {
 	}
 
 	private Attachment readAttachment (Skin skin, String name, JsonValue map) {
+		float scale = this.scale;
 		name = map.getString("name", name);
+		String path = map.getString("path", name);
 
 		switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
 		case region:
-			RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, map.getString("path", name));
+			RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+			if (region == null) return null;
+			region.setPath(path);
 			region.setX(map.getFloat("x", 0) * scale);
 			region.setY(map.getFloat("y", 0) * scale);
 			region.setScaleX(map.getFloat("scaleX", 1));
@@ -187,17 +192,62 @@ public class SkeletonJson {
 			return region;
 		case boundingbox: {
 			BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
-			box.setVertices(readFloatArray(map.require("vertices"), scale));
+			if (box == null) return null;
+			float[] vertices = map.require("vertices").asFloatArray();
+			if (scale != 1) {
+				for (int i = 0, n = vertices.length; i < n; i++)
+					vertices[i] *= scale;
+			}
+			box.setVertices(vertices);
 			return box;
 		}
 		case mesh: {
-			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, map.getString("path", name));
-			float[] vertices = readFloatArray(map.require("vertices"), scale);
-			short[] triangles = readShortArray(map.require("triangles"));
-			float[] uvs = readFloatArray(map.require("uvs"), 1);
-			mesh.setMesh(vertices, triangles, uvs);
-			if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt());
-			if (map.has("edges")) mesh.setEdges(readIntArray(map.require("edges")));
+			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+			if (mesh == null) return null;
+			mesh.setPath(path);
+			float[] vertices = map.require("vertices").asFloatArray();
+			if (scale != 1) {
+				for (int i = 0, n = vertices.length; i < n; i++)
+					vertices[i] *= scale;
+			}
+			mesh.setVertices(vertices);
+			mesh.setTriangles(map.require("triangles").asShortArray());
+			mesh.setRegionUVs(map.require("uvs").asFloatArray());
+			mesh.updateUVs();
+
+			if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+			if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
+			mesh.setWidth(map.getFloat("width", 0) * scale);
+			mesh.setHeight(map.getFloat("height", 0) * scale);
+			return mesh;
+		}
+		case skinnedmesh: {
+			SkinnedMeshAttachment mesh = attachmentLoader.newSkinnedMeshAttachment(skin, name, path);
+			if (mesh == null) return null;
+			mesh.setPath(path);
+			float[] uvs = map.require("uvs").asFloatArray();
+			float[] vertices = map.require("vertices").asFloatArray();
+			FloatArray weights = new FloatArray(uvs.length * 3 * 3);
+			IntArray bones = new IntArray(uvs.length * 3);
+			for (int i = 0, n = vertices.length; i < n;) {
+				int boneCount = (int)vertices[i++];
+				bones.add(boneCount);
+				for (int nn = i + boneCount * 4; i < nn;) {
+					bones.add((int)vertices[i]);
+					weights.add(vertices[i + 1] * scale);
+					weights.add(vertices[i + 2] * scale);
+					weights.add(vertices[i + 3]);
+					i += 4;
+				}
+			}
+			mesh.setBones(bones.toArray());
+			mesh.setWeights(weights.toArray());
+			mesh.setTriangles(map.require("triangles").asShortArray());
+			mesh.setRegionUVs(uvs);
+			mesh.updateUVs();
+
+			if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+			if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
 			mesh.setWidth(map.getFloat("width", 0) * scale);
 			mesh.setHeight(map.getFloat("height", 0) * scale);
 			return mesh;
@@ -215,58 +265,70 @@ public class SkeletonJson {
 		return null;
 	}
 
-	private float[] readFloatArray (JsonValue jsonArray, float scale) {
-		float[] array = new float[jsonArray.size];
-		int i = 0;
-		for (JsonValue point = jsonArray.child; point != null; point = point.next())
-			array[i++] = point.asFloat() * scale;
-		return array;
-	}
-
-	private short[] readShortArray (JsonValue jsonArray) {
-		short[] array = new short[jsonArray.size];
-		int i = 0;
-		for (JsonValue point = jsonArray.child; point != null; point = point.next())
-			array[i++] = (short)point.asInt();
-		return array;
-	}
-
-	private int[] readIntArray (JsonValue jsonArray) {
-		int[] array = new int[jsonArray.size];
-		int i = 0;
-		for (JsonValue point = jsonArray.child; point != null; point = point.next())
-			array[i++] = point.asInt();
-		return array;
-	}
-
 	private void readAnimation (String name, JsonValue map, SkeletonData skeletonData) {
+		float scale = this.scale;
 		Array<Timeline> timelines = new Array();
 		float duration = 0;
 
-		for (JsonValue boneMap = map.getChild("bones"); boneMap != null; boneMap = boneMap.next()) {
-			int boneIndex = skeletonData.findBoneIndex(boneMap.name());
-			if (boneIndex == -1) throw new SerializationException("Bone not found: " + boneMap.name());
+		// Slot timelines.
+		for (JsonValue slotMap = map.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
+			int slotIndex = skeletonData.findSlotIndex(slotMap.name);
+			if (slotIndex == -1) throw new SerializationException("Slot not found: " + slotMap.name);
 
-			for (JsonValue timelineMap = boneMap.child(); timelineMap != null; timelineMap = timelineMap.next()) {
-				String timelineName = timelineMap.name();
-				if (timelineName.equals(TIMELINE_ROTATE)) {
+			for (JsonValue timelineMap = slotMap.child; timelineMap != null; timelineMap = timelineMap.next) {
+				String timelineName = timelineMap.name;
+				if (timelineName.equals("color")) {
+					ColorTimeline timeline = new ColorTimeline(timelineMap.size);
+					timeline.slotIndex = slotIndex;
+
+					int frameIndex = 0;
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+						Color color = Color.valueOf(valueMap.getString("color"));
+						timeline.setFrame(frameIndex, valueMap.getFloat("time"), color.r, color.g, color.b, color.a);
+						readCurve(timeline, frameIndex, valueMap);
+						frameIndex++;
+					}
+					timelines.add(timeline);
+					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 5 - 5]);
+
+				} else if (timelineName.equals("attachment")) {
+					AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
+					timeline.slotIndex = slotIndex;
+
+					int frameIndex = 0;
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
+						timeline.setFrame(frameIndex++, valueMap.getFloat("time"), valueMap.getString("name"));
+					timelines.add(timeline);
+					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
+				} else
+					throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name + ")");
+			}
+		}
+
+		// Bone timelines.
+		for (JsonValue boneMap = map.getChild("bones"); boneMap != null; boneMap = boneMap.next) {
+			int boneIndex = skeletonData.findBoneIndex(boneMap.name);
+			if (boneIndex == -1) throw new SerializationException("Bone not found: " + boneMap.name);
+
+			for (JsonValue timelineMap = boneMap.child; timelineMap != null; timelineMap = timelineMap.next) {
+				String timelineName = timelineMap.name;
+				if (timelineName.equals("rotate")) {
 					RotateTimeline timeline = new RotateTimeline(timelineMap.size);
 					timeline.boneIndex = boneIndex;
 
 					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child(); valueMap != null; valueMap = valueMap.next()) {
-						float time = valueMap.getFloat("time");
-						timeline.setFrame(frameIndex, time, valueMap.getFloat("angle"));
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+						timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getFloat("angle"));
 						readCurve(timeline, frameIndex, valueMap);
 						frameIndex++;
 					}
 					timelines.add(timeline);
 					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 2 - 2]);
 
-				} else if (timelineName.equals(TIMELINE_TRANSLATE) || timelineName.equals(TIMELINE_SCALE)) {
+				} else if (timelineName.equals("translate") || timelineName.equals("scale")) {
 					TranslateTimeline timeline;
 					float timelineScale = 1;
-					if (timelineName.equals(TIMELINE_SCALE))
+					if (timelineName.equals("scale"))
 						timeline = new ScaleTimeline(timelineMap.size);
 					else {
 						timeline = new TranslateTimeline(timelineMap.size);
@@ -275,10 +337,9 @@ public class SkeletonJson {
 					timeline.boneIndex = boneIndex;
 
 					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child(); valueMap != null; valueMap = valueMap.next()) {
-						float time = valueMap.getFloat("time");
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
 						float x = valueMap.getFloat("x", 0), y = valueMap.getFloat("y", 0);
-						timeline.setFrame(frameIndex, time, x * timelineScale, y * timelineScale);
+						timeline.setFrame(frameIndex, valueMap.getFloat("time"), x * timelineScale, y * timelineScale);
 						readCurve(timeline, frameIndex, valueMap);
 						frameIndex++;
 					}
@@ -286,71 +347,71 @@ public class SkeletonJson {
 					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 3 - 3]);
 
 				} else
-					throw new RuntimeException("Invalid timeline type for a bone: " + timelineName + " (" + boneMap.name() + ")");
+					throw new RuntimeException("Invalid timeline type for a bone: " + timelineName + " (" + boneMap.name + ")");
 			}
 		}
 
-		for (JsonValue slotMap = map.getChild("slots"); slotMap != null; slotMap = slotMap.next()) {
-			int slotIndex = skeletonData.findSlotIndex(slotMap.name());
-			if (slotIndex == -1) throw new SerializationException("Slot not found: " + slotMap.name());
-
-			for (JsonValue timelineMap = slotMap.child(); timelineMap != null; timelineMap = timelineMap.next()) {
-				String timelineName = timelineMap.name();
-				if (timelineName.equals(TIMELINE_COLOR)) {
-					ColorTimeline timeline = new ColorTimeline(timelineMap.size);
+		// FFD timelines.
+		for (JsonValue ffdMap = map.getChild("ffd"); ffdMap != null; ffdMap = ffdMap.next) {
+			Skin skin = skeletonData.findSkin(ffdMap.name);
+			if (skin == null) throw new SerializationException("Skin not found: " + ffdMap.name);
+			for (JsonValue slotMap = ffdMap.child; slotMap != null; slotMap = slotMap.next) {
+				int slotIndex = skeletonData.findSlotIndex(slotMap.name);
+				if (slotIndex == -1) throw new SerializationException("Slot not found: " + slotMap.name);
+				for (JsonValue meshMap = slotMap.child; meshMap != null; meshMap = meshMap.next) {
+					FfdTimeline timeline = new FfdTimeline(meshMap.size);
+					Attachment attachment = skin.getAttachment(slotIndex, meshMap.name);
+					if (attachment == null) throw new SerializationException("FFD attachment not found: " + meshMap.name);
 					timeline.slotIndex = slotIndex;
+					timeline.attachment = attachment;
+
+					int vertexCount;
+					if (attachment instanceof MeshAttachment)
+						vertexCount = ((MeshAttachment)attachment).getVertices().length;
+					else
+						vertexCount = ((SkinnedMeshAttachment)attachment).getWeights().length / 3 * 2;
 
 					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child(); valueMap != null; valueMap = valueMap.next()) {
-						float time = valueMap.getFloat("time");
-						Color color = Color.valueOf(valueMap.getString("color"));
-						timeline.setFrame(frameIndex, time, color.r, color.g, color.b, color.a);
+					for (JsonValue valueMap = meshMap.child; valueMap != null; valueMap = valueMap.next) {
+						float[] vertices;
+						JsonValue verticesValue = valueMap.get("vertices");
+						if (verticesValue == null) {
+							if (attachment instanceof MeshAttachment)
+								vertices = ((MeshAttachment)attachment).getVertices();
+							else
+								vertices = new float[vertexCount];
+						} else {
+							vertices = new float[vertexCount];
+							int start = valueMap.getInt("offset", 0);
+							System.arraycopy(verticesValue.asFloatArray(), 0, vertices, start, verticesValue.size);
+							if (scale != 1) {
+								for (int i = start, n = i + verticesValue.size; i < n; i++)
+									vertices[i] *= scale;
+							}
+							if (attachment instanceof MeshAttachment) {
+								float[] meshVertices = ((MeshAttachment)attachment).getVertices();
+								for (int i = 0, n = vertices.length; i < n; i++)
+									vertices[i] += meshVertices[i];
+							}
+						}
+
+						timeline.setFrame(frameIndex, valueMap.getFloat("time"), vertices);
 						readCurve(timeline, frameIndex, valueMap);
 						frameIndex++;
 					}
 					timelines.add(timeline);
-					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 5 - 5]);
-
-				} else if (timelineName.equals(TIMELINE_ATTACHMENT)) {
-					AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
-					timeline.slotIndex = slotIndex;
-
-					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child(); valueMap != null; valueMap = valueMap.next()) {
-						float time = valueMap.getFloat("time");
-						timeline.setFrame(frameIndex++, time, valueMap.getString("name"));
-					}
-					timelines.add(timeline);
 					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
-
-				} else
-					throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name() + ")");
+				}
 			}
 		}
 
-		JsonValue eventsMap = map.get("events");
-		if (eventsMap != null) {
-			EventTimeline timeline = new EventTimeline(eventsMap.size);
-			int frameIndex = 0;
-			for (JsonValue eventMap = eventsMap.child; eventMap != null; eventMap = eventMap.next()) {
-				EventData eventData = skeletonData.findEvent(eventMap.getString("name"));
-				if (eventData == null) throw new SerializationException("Event not found: " + eventMap.getString("name"));
-				Event event = new Event(eventData);
-				event.intValue = eventMap.getInt("int", eventData.getInt());
-				event.floatValue = eventMap.getFloat("float", eventData.getFloat());
-				event.stringValue = eventMap.getString("string", eventData.getString());
-				timeline.setFrame(frameIndex++, eventMap.getFloat("time"), event);
-			}
-			timelines.add(timeline);
-			duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
-		}
-
+		// Draw order timeline.
 		JsonValue drawOrdersMap = map.get("draworder");
 		if (drawOrdersMap != null) {
 			DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrdersMap.size);
 			int slotCount = skeletonData.slots.size;
 			int frameIndex = 0;
-			for (JsonValue drawOrderMap = drawOrdersMap.child; drawOrderMap != null; drawOrderMap = drawOrderMap.next()) {
+			for (JsonValue drawOrderMap = drawOrdersMap.child; drawOrderMap != null; drawOrderMap = drawOrderMap.next) {
 				int[] drawOrder = null;
 				JsonValue offsets = drawOrderMap.get("offsets");
 				if (offsets != null) {
@@ -359,7 +420,7 @@ public class SkeletonJson {
 						drawOrder[i] = -1;
 					int[] unchanged = new int[slotCount - offsets.size];
 					int originalIndex = 0, unchangedIndex = 0;
-					for (JsonValue offsetMap = offsets.child; offsetMap != null; offsetMap = offsetMap.next()) {
+					for (JsonValue offsetMap = offsets.child; offsetMap != null; offsetMap = offsetMap.next) {
 						int slotIndex = skeletonData.findSlotIndex(offsetMap.getString("slot"));
 						if (slotIndex == -1) throw new SerializationException("Slot not found: " + offsetMap.getString("slot"));
 						// Collect unchanged items.
@@ -376,6 +437,24 @@ public class SkeletonJson {
 						if (drawOrder[i] == -1) drawOrder[i] = unchanged[--unchangedIndex];
 				}
 				timeline.setFrame(frameIndex++, drawOrderMap.getFloat("time"), drawOrder);
+			}
+			timelines.add(timeline);
+			duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
+		}
+
+		// Event timeline.
+		JsonValue eventsMap = map.get("events");
+		if (eventsMap != null) {
+			EventTimeline timeline = new EventTimeline(eventsMap.size);
+			int frameIndex = 0;
+			for (JsonValue eventMap = eventsMap.child; eventMap != null; eventMap = eventMap.next) {
+				EventData eventData = skeletonData.findEvent(eventMap.getString("name"));
+				if (eventData == null) throw new SerializationException("Event not found: " + eventMap.getString("name"));
+				Event event = new Event(eventData);
+				event.intValue = eventMap.getInt("int", eventData.getInt());
+				event.floatValue = eventMap.getFloat("float", eventData.getFloat());
+				event.stringValue = eventMap.getString("string", eventData.getString());
+				timeline.setFrame(frameIndex++, eventMap.getFloat("time"), event);
 			}
 			timelines.add(timeline);
 			duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);

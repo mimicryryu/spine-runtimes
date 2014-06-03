@@ -1,35 +1,32 @@
-------------------------------------------------------------------------------
- -- Spine Runtime Software License - Version 1.0
- -- 
- -- Copyright (c) 2013, Esoteric Software
- -- All rights reserved.
- -- 
- -- Redistribution and use in source and binary forms in whole or in part, with
- -- or without modification, are permitted provided that the following conditions
- -- are met:
- -- 
- -- 1. A Spine Essential, Professional, Enterprise, or Education License must
- --    be purchased from Esoteric Software and the license must remain valid:
- --    http://esotericsoftware.com/
- -- 2. Redistributions of source code must retain this license, which is the
- --    above copyright notice, this declaration of conditions and the following
- --    disclaimer.
- -- 3. Redistributions in binary form must reproduce this license, which is the
- --    above copyright notice, this declaration of conditions and the following
- --    disclaimer, in the documentation and/or other materials provided with the
- --    distribution.
- -- 
- -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- -- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- -- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- -- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- -- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- -- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- -- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- -- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- -- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Spine Runtimes Software License
+-- Version 2.1
+-- 
+-- Copyright (c) 2013, Esoteric Software
+-- All rights reserved.
+-- 
+-- You are granted a perpetual, non-exclusive, non-sublicensable and
+-- non-transferable license to install, execute and perform the Spine Runtimes
+-- Software (the "Software") solely for internal use. Without the written
+-- permission of Esoteric Software (typically granted by licensing Spine), you
+-- may not (a) modify, translate, adapt or otherwise create derivative works,
+-- improvements of the Software or develop new applications using the Software
+-- or (b) remove, delete, alter or obscure any trademarks or any copyright,
+-- trademark, patent or other intellectual property or proprietary rights
+-- notices on or in the Software, including any copy thereof. Redistributions
+-- in binary or source form must include this license and terms.
+-- 
+-- THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
+-- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+-- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+-- EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+-- SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+-- PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+-- OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+-- WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+-- OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+-- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-------------------------------------------------------------------------------
 
 local SkeletonData = require "spine-lua.SkeletonData"
 local BoneData = require "spine-lua.BoneData"
@@ -40,12 +37,6 @@ local Animation = require "spine-lua.Animation"
 local EventData = require "spine-lua.EventData"
 local Event = require "spine-lua.Event"
 local AttachmentType = require "spine-lua.AttachmentType"
-
-local TIMELINE_SCALE = "scale"
-local TIMELINE_ROTATE = "rotate"
-local TIMELINE_TRANSLATE = "translate"
-local TIMELINE_ATTACHMENT = "attachment"
-local TIMELINE_COLOR = "color"
 
 local SkeletonJson = {}
 function SkeletonJson.new (attachmentLoader)
@@ -204,7 +195,7 @@ function SkeletonJson.new (attachmentLoader)
 				if boneIndex == -1 then error("Bone not found: " .. boneName) end
 
 				for timelineName,values in pairs(timelineMap) do
-					if timelineName == TIMELINE_ROTATE then
+					if timelineName == "rotate" then
 						local timeline = Animation.RotateTimeline.new()
 						timeline.boneIndex = boneIndex
 
@@ -218,10 +209,10 @@ function SkeletonJson.new (attachmentLoader)
 						table.insert(timelines, timeline)
 						duration = math.max(duration, timeline:getDuration())
 
-					elseif timelineName == TIMELINE_TRANSLATE or timelineName == TIMELINE_SCALE then
+					elseif timelineName == "translate" or timelineName == "scale" then
 						local timeline
 						local timelineScale = 1
-						if timelineName == TIMELINE_SCALE then
+						if timelineName == "scale" then
 							timeline = Animation.ScaleTimeline.new()
 						else
 							timeline = Animation.TranslateTimeline.new()
@@ -254,7 +245,7 @@ function SkeletonJson.new (attachmentLoader)
 				local slotIndex = skeletonData.slotNameIndices[slotName]
 
 				for timelineName,values in pairs(timelineMap) do
-					if timelineName == TIMELINE_COLOR then
+					if timelineName == "color" then
 						local timeline = Animation.ColorTimeline.new()
 						timeline.slotIndex = slotIndex
 
@@ -275,7 +266,7 @@ function SkeletonJson.new (attachmentLoader)
 						table.insert(timelines, timeline)
 						duration = math.max(duration, timeline:getDuration())
 
-					elseif timelineName == TIMELINE_ATTACHMENT then
+					elseif timelineName == "attachment" then
 						local timeline = Animation.AttachmentTimeline.new()
 						timeline.slotName = slotName
 
@@ -303,7 +294,7 @@ function SkeletonJson.new (attachmentLoader)
 			local frameIndex = 0
 			for i,eventMap in ipairs(events) do
 				local eventData = skeletonData:findEvent(eventMap["name"])
-				if not eventData then error("Event not found: " + eventMap["name"]) end
+				if not eventData then error("Event not found: " .. eventMap["name"]) end
 				local event = Event.new(eventData)
 				event.intValue = eventMap["int"] or eventData.intValue
 				event.floatValue = eventMap["float"] or eventData.floatValue
@@ -330,7 +321,7 @@ function SkeletonJson.new (attachmentLoader)
 					local unchangedIndex = 1
 					for ii,offsetMap in ipairs(offsets) do
 						local slotIndex = skeletonData:findSlotIndex(offsetMap["slot"])
-						if slotIndex == -1 then error("Slot not found: " + offsetMap["slot"]) end
+						if slotIndex == -1 then error("Slot not found: " .. offsetMap["slot"]) end
 						-- Collect unchanged items.
 						while originalIndex ~= slotIndex do
 							unchanged[unchangedIndex] = originalIndex
