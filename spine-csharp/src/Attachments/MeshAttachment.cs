@@ -38,6 +38,7 @@ namespace Spine {
 		internal float regionOffsetX, regionOffsetY, regionWidth, regionHeight, regionOriginalWidth, regionOriginalHeight;
 		internal float r = 1, g = 1, b = 1, a = 1;
 
+		public int HullLength { get; set; }
 		public float[] Vertices { get { return vertices; } set { vertices = value; } }
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
 		public float[] UVs { get { return uvs; } set { uvs = value; } }
@@ -63,7 +64,6 @@ namespace Spine {
 		public float RegionOriginalHeight { get { return regionOriginalHeight; } set { regionOriginalHeight = value; } } // Unrotated, unstripped size.
 
 		// Nonessential.
-		public int HullLength { get; set; }
 		public int[] Edges { get; set; }
 		public float Width { get; set; }
 		public float Height { get; set; }
@@ -96,8 +96,9 @@ namespace Spine {
 			y += bone.worldY;
 			float m00 = bone.m00, m01 = bone.m01, m10 = bone.m10, m11 = bone.m11;
 			float[] vertices = this.vertices;
-			if (slot.attachmentVerticesCount == vertices.Length) vertices = slot.AttachmentVertices;
-			for (int i = 0, n = vertices.Length; i < n; i += 2) {
+			int verticesCount = vertices.Length;
+			if (slot.attachmentVerticesCount == verticesCount) vertices = slot.AttachmentVertices;
+			for (int i = 0; i < verticesCount; i += 2) {
 				float vx = vertices[i];
 				float vy = vertices[i + 1];
 				worldVertices[i] = vx * m00 + vy * m01 + x;

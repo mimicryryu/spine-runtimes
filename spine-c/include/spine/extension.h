@@ -32,8 +32,8 @@
 #define SPINE_EXTENSION_H_
 
 /* All allocation uses these. */
-#define MALLOC(TYPE,COUNT) ((TYPE*)_malloc(sizeof(TYPE) * COUNT))
-#define CALLOC(TYPE,COUNT) ((TYPE*)_calloc(COUNT, sizeof(TYPE)))
+#define MALLOC(TYPE,COUNT) ((TYPE*)_malloc(sizeof(TYPE) * COUNT, __FILE__, __LINE__))
+#define CALLOC(TYPE,COUNT) ((TYPE*)_calloc(COUNT, sizeof(TYPE), __FILE__, __LINE__))
 #define NEW(TYPE) CALLOC(TYPE,1)
 
 /* Gets the direct super class. Type safe. */
@@ -55,7 +55,7 @@
 #define FREE(VALUE) _free((void*)VALUE)
 
 /* Allocates a new char[], assigns it to TO, and copies FROM to it. Can be used on const types. */
-#define MALLOC_STR(TO,FROM) strcpy(CONST_CAST(char*, TO) = (char*)malloc(strlen(FROM) + 1), FROM)
+#define MALLOC_STR(TO,FROM) strcpy(CONST_CAST(char*, TO) = (char*)MALLOC(char, strlen(FROM) + 1), FROM)
 
 #ifdef __STDC_VERSION__
 #define FMOD(A,B) fmodf(A, B)
@@ -74,6 +74,7 @@
 #include <spine/MeshAttachment.h>
 #include <spine/SkinnedMeshAttachment.h>
 #include <spine/BoundingBoxAttachment.h>
+#include <spine/AnimationState.h>
 
 namespace cocos2d { namespace extension {
 
@@ -95,14 +96,28 @@ char* _spUtil_readFile (const char* path, int* length);
  * Internal API available for extension:
  */
 
-void* _malloc (size_t size);
-void* _calloc (size_t num, size_t size);
+void* _malloc (size_t size, const char* file, int line);
+void* _calloc (size_t num, size_t size, const char* file, int line);
 void _free (void* ptr);
 
 void _setMalloc (void* (*_malloc) (size_t size));
+void _setDebugMalloc (void* (*_malloc) (size_t size, const char* file, int line));
 void _setFree (void (*_free) (void* ptr));
 
 char* _readFile (const char* path, int* length);
+
+/**/
+
+typedef struct {
+	spAnimationState super;
+	spEvent** events;
+
+	spTrackEntry* (*createTrackEntry) (spAnimationState* self);
+	void (*disposeTrackEntry) (spTrackEntry* entry);
+} _spAnimationState;
+
+spTrackEntry* _spTrackEntry_create (spAnimationState* self);
+void _spTrackEntry_dispose (spTrackEntry* self);
 
 /**/
 

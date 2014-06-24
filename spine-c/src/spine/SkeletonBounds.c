@@ -32,8 +32,6 @@
 #include <limits.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spPolygon* spPolygon_create (int capacity) {
 	spPolygon* self = NEW(spPolygon);
 	self->capacity = capacity;
@@ -205,5 +203,3 @@ spPolygon* spSkeletonBounds_getPolygon (spSkeletonBounds* self, spBoundingBoxAtt
 		if (self->boundingBoxes[i] == boundingBox) return self->polygons[i];
 	return 0;
 }
-
-}} // namespace cocos2d { namespace extension {

@@ -48,6 +48,7 @@ typedef void (*spAnimationStateListener) (spAnimationState* state, int trackInde
 
 typedef struct spTrackEntry spTrackEntry;
 struct spTrackEntry {
+	spAnimationState* const state;
 	spTrackEntry* next;
 	spTrackEntry* previous;
 	spAnimation* animation;
@@ -55,16 +56,19 @@ struct spTrackEntry {
 	float delay, time, lastTime, endTime, timeScale;
 	spAnimationStateListener listener;
 	float mixTime, mixDuration, mix;
+
+	void* rendererObject;
 };
 
 struct spAnimationState {
 	spAnimationStateData* const data;
 	float timeScale;
 	spAnimationStateListener listener;
-	void* context;
 
 	int trackCount;
 	spTrackEntry** tracks;
+
+	void* rendererObject;
 };
 
 /* @param data May be 0 for no mixing. */

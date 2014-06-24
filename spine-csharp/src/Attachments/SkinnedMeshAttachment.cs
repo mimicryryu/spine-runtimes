@@ -40,6 +40,7 @@ namespace Spine {
 		internal float regionOffsetX, regionOffsetY, regionWidth, regionHeight, regionOriginalWidth, regionOriginalHeight;
 		internal float r = 1, g = 1, b = 1, a = 1;
 
+		public int HullLength { get; set; }
 		public int[] Bones { get { return bones; } set { bones = value; } }
 		public float[] Weights { get { return weights; } set { weights = value; } }
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
@@ -66,7 +67,6 @@ namespace Spine {
 		public float RegionOriginalHeight { get { return regionOriginalHeight; } set { regionOriginalHeight = value; } } // Unrotated, unstripped size.
 
 		// Nonessential.
-		public int HullLength { get; set; }
 		public int[] Edges { get; set; }
 		public float Width { get; set; }
 		public float Height { get; set; }
@@ -102,10 +102,10 @@ namespace Spine {
 					float wx = 0, wy = 0;
 					int nn = bones[v++] + v;
 					for (; v < nn; v++, b += 3) {
-						Bone bone = (Bone)skeletonBones[bones[v]];
+						Bone bone = skeletonBones[bones[v]];
 						float vx = weights[b], vy = weights[b + 1], weight = weights[b + 2];
-						wx += (vx * bone.M00 + vy * bone.M01 + bone.worldX) * weight;
-						wy += (vx * bone.M10 + vy * bone.M11 + bone.worldY) * weight;
+						wx += (vx * bone.m00 + vy * bone.m01 + bone.worldX) * weight;
+						wy += (vx * bone.m10 + vy * bone.m11 + bone.worldY) * weight;
 					}
 					worldVertices[w] = wx + x;
 					worldVertices[w + 1] = wy + y;
@@ -116,10 +116,10 @@ namespace Spine {
 					float wx = 0, wy = 0;
 					int nn = bones[v++] + v;
 					for (; v < nn; v++, b += 3, f += 2) {
-						Bone bone = (Bone)skeletonBones[bones[v]];
+						Bone bone = skeletonBones[bones[v]];
 						float vx = weights[b] + ffd[f], vy = weights[b + 1] + ffd[f + 1], weight = weights[b + 2];
-						wx += (vx * bone.M00 + vy * bone.M01 + bone.worldX) * weight;
-						wy += (vx * bone.M10 + vy * bone.M11 + bone.worldY) * weight;
+						wx += (vx * bone.m00 + vy * bone.m01 + bone.worldX) * weight;
+						wy += (vx * bone.m10 + vy * bone.m11 + bone.worldY) * weight;
 					}
 					worldVertices[w] = wx + x;
 					worldVertices[w + 1] = wy + y;

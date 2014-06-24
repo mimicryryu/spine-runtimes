@@ -32,13 +32,7 @@
 #include <ctype.h>
 #include <spine/extension.h>
 
-<<<<<<< HEAD
-namespace cocos2d { namespace extension {
-
-spAtlasPage* spAtlasPage_create (const char* name) {
-=======
 spAtlasPage* spAtlasPage_create (spAtlas* atlas, const char* name) {
->>>>>>> 0a275f0ac78ae3aa0a54c0128ce6b389797fd33e
 	spAtlasPage* self = NEW(spAtlasPage);
 	CONST_CAST(spAtlas*, self->atlas) = atlas;
 	MALLOC_STR(self->name, name);
@@ -353,5 +347,3 @@ spAtlasRegion* spAtlas_findRegion (const spAtlas* self, const char* name) {
 	}
 	return 0;
 }
-
-}} // namespace cocos2d { namespace extension {

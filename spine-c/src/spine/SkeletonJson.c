@@ -34,8 +34,6 @@
 #include <spine/extension.h>
 #include <spine/AtlasAttachmentLoader.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	spSkeletonJson super;
 	int ownsLoader;
@@ -229,7 +227,7 @@ static spAnimation* _spSkeletonJson_readAnimation (spSkeletonJson* self, Json* r
 			Json* timelineArray;
 			for (timelineArray = slotMap->child; timelineArray; timelineArray = timelineArray->next) {
 				Json* frame;
-				int verticesCount;
+				int verticesCount = 0;
 				float* tempVertices;
 				spFFDTimeline *timeline;
 
@@ -551,7 +549,6 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 							mesh->triangles[i] = entry->valueInt;
 
 						entry = Json_getItem(attachmentMap, "uvs");
-						mesh->uvsCount = entry->size;
 						mesh->regionUVs = MALLOC(float, entry->size);
 						for (entry = entry->child, i = 0; entry; entry = entry->next, ++i)
 							mesh->regionUVs[i] = entry->valueFloat;
@@ -566,7 +563,7 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 							mesh->a = toColor(color, 3);
 						}
 
-						mesh->hullLength = Json_getFloat(attachmentMap, "hull", 0);
+						mesh->hullLength = Json_getInt(attachmentMap, "hull", 0);
 
 						entry = Json_getItem(attachmentMap, "edges");
 						if (entry) {
@@ -637,7 +634,7 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 							mesh->a = toColor(color, 3);
 						}
 
-						mesh->hullLength = Json_getFloat(attachmentMap, "hull", 0);
+						mesh->hullLength = Json_getInt(attachmentMap, "hull", 0);
 
 						entry = Json_getItem(attachmentMap, "edges");
 						if (entry) {
@@ -696,5 +693,3 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 	Json_dispose(root);
 	return skeletonData;
 }
-
-}} // namespace cocos2d { namespace extension {

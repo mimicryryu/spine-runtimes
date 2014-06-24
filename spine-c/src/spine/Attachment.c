@@ -32,8 +32,6 @@
 #include <spine/extension.h>
 #include <spine/Slot.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct _spAttachmentVtable {
 	void (*dispose) (spAttachment* self);
 } _spAttachmentVtable;
@@ -56,5 +54,3 @@ void _spAttachment_deinit (spAttachment* self) {
 void spAttachment_dispose (spAttachment* self) {
 	VTABLE(spAttachment, self) ->dispose(self);
 }
-
-}} // namespace cocos2d { namespace extension {

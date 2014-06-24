@@ -31,8 +31,6 @@
 #include <spine/EventData.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spEventData* spEventData_create (const char* name) {
 	spEventData* self = NEW(spEventData);
 	MALLOC_STR(self->name, name);
@@ -44,5 +42,3 @@ void spEventData_dispose (spEventData* self) {
 	FREE(self->name);
 	FREE(self);
 }
-
-}} // namespace cocos2d { namespace extension {

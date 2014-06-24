@@ -32,8 +32,6 @@
 #include <spine/extension.h>
 #include "cocos2d.h"
 
-namespace cocos2d { namespace extension {
-
 static int yDown;
 
 void spBone_setYDown (int value) {
@@ -102,5 +100,3 @@ void spBone_updateWorldTransform (spBone* self, int flipX, int flipY) {
 		CONST_CAST(float, self->m11) = -self->m11;
 	}
 }
-
-}} // namespace cocos2d { namespace extension {

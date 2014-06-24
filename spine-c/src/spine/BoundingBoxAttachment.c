@@ -31,8 +31,6 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 void _spBoundingBoxAttachment_dispose (spAttachment* attachment) {
 	spBoundingBoxAttachment* self = SUB_CAST(spBoundingBoxAttachment, attachment);
 
@@ -62,5 +60,3 @@ void spBoundingBoxAttachment_computeWorldVertices (spBoundingBoxAttachment* self
 		worldVertices[i + 1] = px * bone->m10 + py * bone->m11 + y;
 	}
 }
-
-}} // namespace cocos2d { namespace extension {

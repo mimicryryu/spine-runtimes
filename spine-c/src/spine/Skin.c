@@ -31,8 +31,6 @@
 #include <spine/Skin.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct _Entry _Entry;
 struct _Entry {
 	int slotIndex;
@@ -153,5 +151,3 @@ void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* o
         }
     }//** <-- Added by Mimicry. 09-30-2013
 }
-
-}} // namespace cocos2d { namespace extension {

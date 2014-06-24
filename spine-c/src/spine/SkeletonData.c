@@ -32,8 +32,6 @@
 #include <string.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spSkeletonData* spSkeletonData_create () {
 	return NEW(spSkeletonData);
 }
@@ -111,5 +109,3 @@ spAnimation* spSkeletonData_findAnimation (const spSkeletonData* self, const cha
 		if (strcmp(self->animations[i]->name, animationName) == 0) return self->animations[i];
 	return 0;
 }
-
-}} // namespace cocos2d { namespace extension {

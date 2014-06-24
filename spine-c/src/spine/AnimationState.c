@@ -32,36 +32,29 @@
 #include <spine/extension.h>
 #include <string.h>
 
-namespace cocos2d { namespace extension {
-
-spTrackEntry* _spTrackEntry_create () {
-	spTrackEntry* entry = NEW(spTrackEntry);
-	entry->timeScale = 1;
-	entry->lastTime = -1;
-	entry->mix = 1;
-	return entry;
+spTrackEntry* _spTrackEntry_create (spAnimationState* state) {
+	spTrackEntry* self = NEW(spTrackEntry);
+	CONST_CAST(spAnimationState*, self->state) = state;
+	self->timeScale = 1;
+	self->lastTime = -1;
+	self->mix = 1;
+	return self;
 }
 
-void _spTrackEntry_dispose (spTrackEntry* entry) {
-	FREE(entry);
-}
-
-void _spTrackEntry_disposeAll (spTrackEntry* entry) {
-	while (entry) {
-		spTrackEntry* next = entry->next;
-		_spTrackEntry_dispose(entry);
-		entry = next;
-	}
+void _spTrackEntry_dispose (spTrackEntry* self) {
+	if (self->previous) SUB_CAST(_spAnimationState, self->state)->disposeTrackEntry(self->previous);
+	FREE(self);
 }
 
 /**/
 
-typedef struct {
-	spAnimationState super;
-	spEvent** events;
-} _spAnimationState;
+spTrackEntry* _spAnimationState_createTrackEntry (spAnimationState* self) {
+	return _spTrackEntry_create(self);
+}
 
-void _spAnimationState_setCurrent (spAnimationState* self, int index, spTrackEntry* entry);
+void _spAnimationState_disposeTrackEntry (spTrackEntry* entry) {
+	_spTrackEntry_dispose(entry);
+}
 
 spAnimationState* spAnimationState_create (spAnimationStateData* data) {
 	_spAnimationState* internal = NEW(_spAnimationState);
@@ -69,7 +62,18 @@ spAnimationState* spAnimationState_create (spAnimationStateData* data) {
 	internal->events = MALLOC(spEvent*, 64);
 	self->timeScale = 1;
 	CONST_CAST(spAnimationStateData*, self->data) = data;
+	internal->createTrackEntry = _spAnimationState_createTrackEntry;
+	internal->disposeTrackEntry = _spAnimationState_disposeTrackEntry;
 	return self;
+}
+
+void _spAnimationState_disposeAllEntries (spAnimationState* self, spTrackEntry* entry) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
+	while (entry) {
+		spTrackEntry* next = entry->next;
+		internal->disposeTrackEntry(entry);
+		entry = next;
+	}
 }
 
 void spAnimationState_dispose (spAnimationState* self) {
@@ -77,10 +81,12 @@ void spAnimationState_dispose (spAnimationState* self) {
 	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
 	FREE(internal->events);
 	for (i = 0; i < self->trackCount; ++i)
-		_spTrackEntry_disposeAll(self->tracks[i]);
+		_spAnimationState_disposeAllEntries(self, self->tracks[i]);
 	FREE(self->tracks);
 	FREE(self);
 }
+
+void _spAnimationState_setCurrent (spAnimationState* self, int index, spTrackEntry* entry);
 
 void spAnimationState_update (spAnimationState* self, float delta) {
 	int i;
@@ -98,7 +104,8 @@ void spAnimationState_update (spAnimationState* self, float delta) {
 		}
 
 		if (current->next) {
-			if (current->lastTime >= current->next->delay) _spAnimationState_setCurrent(self, i, current->next);
+			current->next->time = current->lastTime - current->next->delay;
+			if (current->next->time >= 0) _spAnimationState_setCurrent(self, i, current->next);
 		} else {
 			/* End non-looping animation when it reaches its end time and there is no next entry. */
 			if (!current->loop && current->lastTime >= current->endTime) spAnimationState_clearTrack(self, i);
@@ -141,7 +148,7 @@ void spAnimationState_apply (spAnimationState* self, spSkeleton* skeleton) {
 
 			if (alpha >= 1) {
 				alpha = 1;
-				_spTrackEntry_dispose(current->previous);
+				internal->disposeTrackEntry(current->previous);
 				current->previous = 0;
 			}
 			spAnimation_mix(current->animation, skeleton, current->lastTime, time,
@@ -194,6 +201,8 @@ void spAnimationState_clearTracks (spAnimationState* self) {
 }
 
 void spAnimationState_clearTrack (spAnimationState* self, int trackIndex) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
+
 	spTrackEntry* current;
 	if (trackIndex >= self->trackCount) return;
 	current = self->tracks[trackIndex];
@@ -204,8 +213,7 @@ void spAnimationState_clearTrack (spAnimationState* self, int trackIndex) {
 
 	self->tracks[trackIndex] = 0;
 
-	if (current->previous) _spTrackEntry_dispose(current->previous);
-	_spTrackEntry_disposeAll(current);
+	_spAnimationState_disposeAllEntries(self, current);
 }
 
 spTrackEntry* _spAnimationState_expandToIndex (spAnimationState* self, int index) {
@@ -220,6 +228,8 @@ spTrackEntry* _spAnimationState_expandToIndex (spAnimationState* self, int index
 }
 
 void _spAnimationState_setCurrent (spAnimationState* self, int index, spTrackEntry* entry) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
+
 	spTrackEntry* current = _spAnimationState_expandToIndex(self, index);
 	if (current) {
 		spTrackEntry* previous = current->previous;
@@ -238,9 +248,9 @@ void _spAnimationState_setCurrent (spAnimationState* self, int index, spTrackEnt
 			} else
 				entry->previous = current;
 		} else
-			_spTrackEntry_dispose(current);
+			internal->disposeTrackEntry(current);
 
-		if (previous) _spTrackEntry_dispose(previous);
+		if (previous) internal->disposeTrackEntry(previous);
 	}
 
 	self->tracks[index] = entry;
@@ -259,11 +269,13 @@ spTrackEntry* spAnimationState_setAnimationByName (spAnimationState* self, int t
 }
 
 spTrackEntry* spAnimationState_setAnimation (spAnimationState* self, int trackIndex, spAnimation* animation, int/*bool*/loop) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
+
 	spTrackEntry* entry;
 	spTrackEntry* current = _spAnimationState_expandToIndex(self, trackIndex);
-	if (current) _spTrackEntry_disposeAll(current->next);
+	if (current) _spAnimationState_disposeAllEntries(self, current->next);
 
-	entry = _spTrackEntry_create();
+	entry = internal->createTrackEntry(self);
 	entry->animation = animation;
 	entry->loop = loop;
 	entry->endTime = animation->duration;
@@ -279,9 +291,10 @@ spTrackEntry* spAnimationState_addAnimationByName (spAnimationState* self, int t
 
 spTrackEntry* spAnimationState_addAnimation (spAnimationState* self, int trackIndex, spAnimation* animation, int/*bool*/loop,
 		float delay) {
+	_spAnimationState* internal = SUB_CAST(_spAnimationState, self);
 	spTrackEntry* last;
 
-	spTrackEntry* entry = _spTrackEntry_create();
+	spTrackEntry* entry = internal->createTrackEntry(self);
 	entry->animation = animation;
 	entry->loop = loop;
 	entry->endTime = animation->duration;
@@ -309,5 +322,3 @@ spTrackEntry* spAnimationState_getCurrent (spAnimationState* self, int trackInde
 	if (trackIndex >= self->trackCount) return 0;
 	return self->tracks[trackIndex];
 }
-
-}} // namespace cocos2d { namespace extension {

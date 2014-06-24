@@ -31,8 +31,6 @@
 #include <spine/SlotData.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spSlotData* spSlotData_create (const char* name, spBoneData* boneData) {
 	spSlotData* self = NEW(spSlotData);
 	MALLOC_STR(self->name, name);
@@ -57,5 +55,3 @@ void spSlotData_setAttachmentName (spSlotData* self, const char* attachmentName)
 	else
 		CONST_CAST(char*, self->attachmentName) = 0;
 }
-
-}} // namespace cocos2d { namespace extension {

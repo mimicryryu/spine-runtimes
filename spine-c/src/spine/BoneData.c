@@ -31,8 +31,6 @@
 #include <spine/BoneData.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spBoneData* spBoneData_create (const char* name, spBoneData* parent) {
 	spBoneData* self = NEW(spBoneData);
 	MALLOC_STR(self->name, name);
@@ -48,5 +46,3 @@ void spBoneData_dispose (spBoneData* self) {
 	FREE(self->name);
 	FREE(self);
 }
-
-}} // namespace cocos2d { namespace extension {

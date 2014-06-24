@@ -31,8 +31,6 @@
 #include <spine/AtlasAttachmentLoader.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spAttachment* _spAtlasAttachmentLoader_newAttachment (spAttachmentLoader* loader, spSkin* skin, spAttachmentType type,
 		const char* name, const char* path) {
 	spAtlasAttachmentLoader* self = SUB_CAST(spAtlasAttachmentLoader, loader);
@@ -113,5 +111,3 @@ spAtlasAttachmentLoader* spAtlasAttachmentLoader_create (spAtlas* atlas) {
 	self->atlas = atlas;
 	return self;
 }
-
-}} // namespace cocos2d { namespace extension {

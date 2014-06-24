@@ -32,8 +32,6 @@
 #include <string.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 spSkeleton* spSkeleton_create (spSkeletonData* data) {
 	int i, ii;
 
@@ -166,6 +164,7 @@ int spSkeleton_setSkinByName (spSkeleton* self, const char* skinName) {
 
 void spSkeleton_setSkin (spSkeleton* self, spSkin* newSkin) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 //	if (self->skin && newSkin) spSkin_attachAll(newSkin, self, self->skin); //** Commented by Mimicry. 09-30-2013
     //** Added by Mimicry. 09-30-2013 -->
     if (newSkin) {
@@ -184,6 +183,23 @@ void spSkeleton_setSkin (spSkeleton* self, spSkin* newSkin) {
 	} else if (newSkin) /**/
 		spSkin_attachAll(newSkin, self, self->skin);
 >>>>>>> 0a275f0ac78ae3aa0a54c0128ce6b389797fd33e
+=======
+	if (newSkin) {
+		if (self->skin)
+			spSkin_attachAll(newSkin, self, self->skin);
+		else {
+			/* No previous skin, attach setup pose attachments. */
+			int i;
+			for (i = 0; i < self->slotCount; ++i) {
+				spSlot* slot = self->slots[i];
+				if (slot->data->attachmentName) {
+					spAttachment* attachment = spSkin_getAttachment(newSkin, i, slot->data->attachmentName);
+					if (attachment) spSlot_setAttachment(slot, attachment);
+				}
+			}
+		}
+	}
+>>>>>>> 6b9d514ca7e958f3a5d394387eae1f3b6965a151
 	CONST_CAST(spSkin*, self->skin) = newSkin;
 }
 
@@ -230,5 +246,3 @@ int spSkeleton_setAttachment (spSkeleton* self, const char* slotName, const char
 void spSkeleton_update (spSkeleton* self, float deltaTime) {
 	self->time += deltaTime;
 }
-
-}} // namespace cocos2d { namespace extension {

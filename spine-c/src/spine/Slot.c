@@ -32,8 +32,6 @@
 #include <spine/extension.h>
 #include <spine/Skeleton.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	spSlot super;
 	float attachmentTime;
@@ -87,5 +85,3 @@ void spSlot_setToSetupPose (spSlot* self) {
     CONST_CAST(spAttachment*, self->holdAttachment) = attachment; //** Added by Mimicry. 2013-10-11
     self->isHold = false; //** Added by Mimicry. 2013-10-20
 }
-
-}} // namespace cocos2d { namespace extension {

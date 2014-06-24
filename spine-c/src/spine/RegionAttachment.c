@@ -31,11 +31,10 @@
 #include <spine/RegionAttachment.h>
 #include <spine/extension.h>
 
-namespace cocos2d { namespace extension {
-
 void _spRegionAttachment_dispose (spAttachment* attachment) {
 	spRegionAttachment* self = SUB_CAST(spRegionAttachment, attachment);
 	_spAttachment_deinit(attachment);
+	FREE(self->path);
 	FREE(self);
 }
 
@@ -119,5 +118,3 @@ void spRegionAttachment_computeWorldVertices (spRegionAttachment* self, float x,
 	vertices[SP_VERTEX_X4] = offset[SP_VERTEX_X4] * bone->m00 + offset[SP_VERTEX_Y4] * bone->m01 + x;
 	vertices[SP_VERTEX_Y4] = offset[SP_VERTEX_X4] * bone->m10 + offset[SP_VERTEX_Y4] * bone->m11 + y;
 }
-
-}} // namespace cocos2d { namespace extension {
