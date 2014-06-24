@@ -33,18 +33,7 @@
 
 #include <spine/spine.h>
 #include "cocos2d.h"
-<<<<<<< HEAD:spine-cocos2dx/src/spine/spine-cocos2dx.h
-#include <spine/CCSkeleton.h>
-#include <spine/CCSkeletonAnimation.h>
-
-namespace cocos2d { namespace extension {
-
-void spRegionAttachment_updateQuad (spRegionAttachment* self, spSlot* slot, cocos2d::ccV3F_C4B_T2F_Quad* quad, bool premultiplied = false);
-=======
 #include <spine/SkeletonRenderer.h>
 #include <spine/SkeletonAnimation.h>
->>>>>>> 6b9d514ca7e958f3a5d394387eae1f3b6965a151:spine-cocos2dx/2/src/spine/spine-cocos2dx.h
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_COCOS2DX_H_ */

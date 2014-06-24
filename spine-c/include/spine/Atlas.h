@@ -31,6 +31,10 @@
 #ifndef SPINE_ATLAS_H_
 #define SPINE_ATLAS_H_
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct spAtlas spAtlas;
 
 typedef enum {
@@ -153,6 +157,10 @@ typedef spAtlas Atlas;
 #define Atlas_createFromFile(...) spAtlas_createFromFile(__VA_ARGS__)
 #define Atlas_dispose(...) spAtlas_dispose(__VA_ARGS__)
 #define Atlas_findRegion(...) spAtlas_findRegion(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_ATLAS_H_ */

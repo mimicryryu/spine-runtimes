@@ -34,6 +34,7 @@
 #include <spine/Bone.h>
 #include <spine/Attachment.h>
 #include <spine/SlotData.h>
+#include <stdbool.h>
 
 struct spSkeleton;
 

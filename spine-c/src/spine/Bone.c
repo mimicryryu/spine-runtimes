@@ -30,7 +30,6 @@
 
 #include <spine/Bone.h>
 #include <spine/extension.h>
-#include "cocos2d.h"
 
 static int yDown;
 

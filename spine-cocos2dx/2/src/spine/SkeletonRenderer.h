@@ -34,7 +34,7 @@
 #include <spine/spine.h>
 #include "cocos2d.h"
 
-namespace cocos2d { namespace extension {
+namespace spine {
 
 class PolygonBatch;
 
@@ -106,6 +106,6 @@ private:
 	void initialize ();
 };
 
-}} // namespace cocos2d { namespace extension {
+}
 
 #endif /* SPINE_SKELETONRENDERER_H_ */

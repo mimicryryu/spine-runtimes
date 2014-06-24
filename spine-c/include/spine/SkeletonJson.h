@@ -37,6 +37,10 @@
 #include <spine/Atlas.h>
 #include <spine/Animation.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct {
 	float scale;
 	spAttachmentLoader* attachmentLoader;
@@ -57,6 +61,10 @@ typedef spSkeletonJson SkeletonJson;
 #define SkeletonJson_dispose(...) spSkeletonJson_dispose(__VA_ARGS__)
 #define SkeletonJson_readSkeletonData(...) spSkeletonJson_readSkeletonData(__VA_ARGS__)
 #define SkeletonJson_readSkeletonDataFile(...) spSkeletonJson_readSkeletonDataFile(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_SKELETONJSON_H_ */

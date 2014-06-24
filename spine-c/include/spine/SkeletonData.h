@@ -37,6 +37,10 @@
 #include <spine/EventData.h>
 #include <spine/Animation.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct {
 	int boneCount;
 	spBoneData** bones;
@@ -81,6 +85,10 @@ typedef spSkeletonData SkeletonData;
 #define SkeletonData_findSkin(...) spSkeletonData_findSkin(__VA_ARGS__)
 #define SkeletonData_findEvent(...) spSkeletonData_findEvent(__VA_ARGS__)
 #define SkeletonData_findAnimation(...) spSkeletonData_findAnimation(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_SKELETONDATA_H_ */

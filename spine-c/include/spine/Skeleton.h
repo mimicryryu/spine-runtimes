@@ -35,6 +35,10 @@
 #include <spine/Slot.h>
 #include <spine/Skin.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct spSkeleton spSkeleton;
 struct spSkeleton {
 	spSkeletonData* const data;
@@ -108,6 +112,10 @@ typedef spSkeleton Skeleton;
 #define Skeleton_getAttachmentForSlotIndex(...) spSkeleton_getAttachmentForSlotIndex(__VA_ARGS__)
 #define Skeleton_setAttachment(...) spSkeleton_setAttachment(__VA_ARGS__)
 #define Skeleton_update(...) spSkeleton_update(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_SKELETON_H_*/

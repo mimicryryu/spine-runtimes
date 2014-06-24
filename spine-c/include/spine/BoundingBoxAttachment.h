@@ -35,6 +35,10 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct spBoundingBoxAttachment spBoundingBoxAttachment;
 struct spBoundingBoxAttachment {
 	spAttachment super;
@@ -49,6 +53,10 @@ void spBoundingBoxAttachment_computeWorldVertices (spBoundingBoxAttachment* self
 typedef spBoundingBoxAttachment BoundingBoxAttachment;
 #define BoundingBoxAttachment_create(...) spBoundingBoxAttachment_create(__VA_ARGS__)
 #define BoundingBoxAttachment_computeWorldVertices(...) spBoundingBoxAttachment_computeWorldVertices(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_BOUNDINGBOXATTACHMENT_H_ */

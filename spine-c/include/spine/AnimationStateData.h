@@ -34,6 +34,10 @@
 #include <spine/Animation.h>
 #include <spine/SkeletonData.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef struct {
 	spSkeletonData* const skeletonData;
 	float defaultMix;
@@ -55,6 +59,10 @@ typedef spAnimationStateData AnimationStateData;
 #define AnimationStateData_setMixByName(...) spAnimationStateData_setMixByName(__VA_ARGS__)
 #define AnimationStateData_setMix(...) spAnimationStateData_setMix(__VA_ARGS__)
 #define AnimationStateData_getMix(...) spAnimationStateData_getMix(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_ANIMATIONSTATEDATA_H_ */

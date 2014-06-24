@@ -38,6 +38,9 @@ USING_NS_CC;
 using std::min;
 using std::max;
 
+#undef nullptr //** Mimicry. 06-24-2014. Compatible with c99.
+#define nullptr NULL //** Mimicry. 06-24-2014. Compatible with c99.
+
 namespace spine {
 
 static const int quadTriangles[6] = {0, 1, 2, 2, 3, 0};
@@ -138,7 +141,7 @@ void SkeletonRenderer::draw () {
 	CC_NODE_DRAW_SETUP();
 	ccGLBindVAO(0);
 
-	ccColor3B nodeColor = getColor();
+	ccColor3B nodeColor = getDisplayedColor(); //** Mimicry. 06-24-2014. Color cascading.
 	skeleton->r = nodeColor.r / (float)255;
 	skeleton->g = nodeColor.g / (float)255;
 	skeleton->b = nodeColor.b / (float)255;

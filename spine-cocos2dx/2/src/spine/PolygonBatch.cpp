@@ -33,6 +33,9 @@
 
 USING_NS_CC;
 
+#undef nullptr //** Mimicry. 06-24-2014. Compatible with c99.
+#define nullptr NULL //** Mimicry. 06-24-2014. Compatible with c99.
+
 namespace spine {
 
 PolygonBatch* PolygonBatch::createWithCapacity (int capacity) {

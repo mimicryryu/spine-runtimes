@@ -34,6 +34,10 @@
 #include <spine/Event.h>
 #include <spine/Attachment.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+    extern "C" {
+#endif
+
 typedef struct spTimeline spTimeline;
 struct spSkeleton;
 
@@ -280,5 +284,6 @@ typedef spFFDTimeline FFDTimeline;
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif /* SPINE_ANIMATION_H_ */

@@ -35,6 +35,10 @@
 #include <spine/AnimationStateData.h>
 #include <spine/Event.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 typedef enum {
 	SP_ANIMATION_START, SP_ANIMATION_END, SP_ANIMATION_COMPLETE, SP_ANIMATION_EVENT
 } spEventType;
@@ -113,6 +117,10 @@ typedef spAnimationState AnimationState;
 #define AnimationState_addAnimationByName(...) spAnimationState_addAnimationByName(__VA_ARGS__)
 #define AnimationState_addAnimation(...) spAnimationState_addAnimation(__VA_ARGS__)
 #define AnimationState_getCurrent(...) spAnimationState_getCurrent(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_ANIMATIONSTATE_H_ */

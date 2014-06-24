@@ -75,6 +75,10 @@
 #include <spine/SkinnedMeshAttachment.h>
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/AnimationState.h>
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+    extern "C" {
+#endif
 
 /*
  * Functions that must be implemented:
@@ -169,6 +173,10 @@ void _spCurveTimeline_deinit (spCurveTimeline* self);
 #ifdef SPINE_SHORT_NAMES
 #define _CurveTimeline_init(...) _spCurveTimeline_init(__VA_ARGS__)
 #define _CurveTimeline_deinit(...) _spCurveTimeline_deinit(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_EXTENSION_H_ */

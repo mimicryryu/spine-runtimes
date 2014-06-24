@@ -33,6 +33,10 @@
 
 #include <spine/Attachment.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+extern "C" {
+#endif
+
 struct spSkeleton;
 
 typedef struct {
@@ -64,6 +68,11 @@ typedef spSkin Skin;
 #define Skin_getAttachment(...) spSkin_getAttachment(__VA_ARGS__)
 #define Skin_getAttachmentName(...) spSkin_getAttachmentName(__VA_ARGS__)
 #define Skin_attachAll(...) spSkin_attachAll(__VA_ARGS__)
+#endif
+
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_SKIN_H_ */

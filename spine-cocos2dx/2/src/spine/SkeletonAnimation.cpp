@@ -53,6 +53,8 @@ typedef struct _TrackEntryListeners {
 	EndListener endListener;
 	CompleteListener completeListener;
 	EventListener eventListener;
+    //** Mimicry. 06-24-2014. Compatible with c99.
+    _TrackEntryListeners():startListener(NULL),endListener(NULL),completeListener(NULL),eventListener(NULL){}
 } _TrackEntryListeners;
 
 static _TrackEntryListeners* getListeners (spTrackEntry* entry) {
@@ -89,6 +91,9 @@ SkeletonAnimation* SkeletonAnimation::createWithFile (const char* skeletonDataFi
 }
 
 void SkeletonAnimation::initialize () {
+    //** Mimicry. 06-24-2014. Compatible with c99.
+    startListener = NULL;endListener = NULL; completeListener = NULL; eventListener = NULL;
+
 	ownsAnimationStateData = true;
 	state = spAnimationState_create(spAnimationStateData_create(skeleton->data));
 	state->rendererObject = this;

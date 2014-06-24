@@ -34,6 +34,10 @@
 #include <spine/Attachment.h>
 #include <spine/Skin.h>
 
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+    extern "C" {
+#endif
+
 typedef struct spAttachmentLoader spAttachmentLoader;
 struct spAttachmentLoader {
 	const char* error1;
@@ -59,6 +63,10 @@ spAttachment* spAttachmentLoader_newAttachment (spAttachmentLoader* self, spSkin
 typedef spAttachmentLoader AttachmentLoader;
 #define AttachmentLoader_dispose(...) spAttachmentLoader_dispose(__VA_ARGS__)
 #define AttachmentLoader_newAttachment(...) spAttachmentLoader_newAttachment(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-24-2014
+}
 #endif
 
 #endif /* SPINE_ATTACHMENTLOADER_H_ */

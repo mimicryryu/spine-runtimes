@@ -37,10 +37,19 @@
 
 namespace spine {
 
+/** Mimicry 06-24-2014 --> **/
+/* compatible with c99
 typedef std::function<void(int trackIndex)> StartListener;
 typedef std::function<void(int trackIndex)> EndListener;
 typedef std::function<void(int trackIndex, int loopCount)> CompleteListener;
 typedef std::function<void(int trackIndex, spEvent* event)> EventListener;
+*/
+typedef void (*StartListener)(int trackIndex);
+typedef void (*EndListener)(int trackIndex);
+typedef void (*CompleteListener)(int trackIndex, int loopCount);
+typedef void (*EventListener)(int trackIndex, spEvent* event);
+/** <-- Mimicry 06-24-2014 **/
+
 
 /** Draws an animated skeleton, providing an AnimationState for applying one or more animations and queuing animations to be
   * played later. */
