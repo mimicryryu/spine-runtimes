@@ -34,8 +34,6 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/Skeleton.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	float* const vertices;
 	int count;
@@ -102,7 +100,5 @@ typedef spSkeletonBounds SkeletonBounds;
 #define SkeletonBounds_intersectsSegment(...) spSkeletonBounds_intersectsSegment(__VA_ARGS__)
 #define SkeletonBounds_getPolygon(...) spSkeletonBounds_getPolygon(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SKELETONBOUNDS_H_ */

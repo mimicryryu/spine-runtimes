@@ -34,8 +34,6 @@
 #include <spine/AttachmentLoader.h>
 #include <spine/Atlas.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	spAttachmentLoader super;
 	spAtlas* atlas;
@@ -47,7 +45,5 @@ spAtlasAttachmentLoader* spAtlasAttachmentLoader_create (spAtlas* atlas);
 typedef spAtlasAttachmentLoader AtlasAttachmentLoader;
 #define AtlasAttachmentLoader_create(...) spAtlasAttachmentLoader_create(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ATLASATTACHMENTLOADER_H_ */

@@ -31,8 +31,6 @@
 #ifndef SPINE_ATLAS_H_
 #define SPINE_ATLAS_H_
 
-namespace cocos2d { namespace extension {
-
 typedef struct spAtlas spAtlas;
 
 typedef enum {
@@ -156,7 +154,5 @@ typedef spAtlas Atlas;
 #define Atlas_dispose(...) spAtlas_dispose(__VA_ARGS__)
 #define Atlas_findRegion(...) spAtlas_findRegion(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ATLAS_H_ */

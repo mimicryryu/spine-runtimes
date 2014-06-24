@@ -33,8 +33,6 @@
 
 #include <spine/BoneData.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	const char* const name;
 	const spBoneData* const boneData;
@@ -55,7 +53,5 @@ typedef spSlotData SlotData;
 #define SlotData_dispose(...) spSlotData_dispose(__VA_ARGS__)
 #define SlotData_setAttachmentName(...) spSlotData_setAttachmentName(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SLOTDATA_H_ */

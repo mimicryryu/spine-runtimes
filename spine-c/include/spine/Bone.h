@@ -33,8 +33,6 @@
 
 #include <spine/BoneData.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct spBone spBone;
 struct spBone {
 	spBoneData* const data;
@@ -67,7 +65,5 @@ typedef spBone Bone;
 #define Bone_setToSetupPose(...) spBone_setToSetupPose(__VA_ARGS__)
 #define Bone_updateWorldTransform(...) spBone_updateWorldTransform(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_BONE_H_ */

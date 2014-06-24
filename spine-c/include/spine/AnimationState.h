@@ -35,8 +35,6 @@
 #include <spine/AnimationStateData.h>
 #include <spine/Event.h>
 
-namespace cocos2d { namespace extension {
-
 typedef enum {
 	SP_ANIMATION_START, SP_ANIMATION_END, SP_ANIMATION_COMPLETE, SP_ANIMATION_EVENT
 } spEventType;
@@ -116,7 +114,5 @@ typedef spAnimationState AnimationState;
 #define AnimationState_addAnimation(...) spAnimationState_addAnimation(__VA_ARGS__)
 #define AnimationState_getCurrent(...) spAnimationState_getCurrent(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ANIMATIONSTATE_H_ */

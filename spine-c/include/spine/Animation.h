@@ -34,8 +34,6 @@
 #include <spine/Event.h>
 #include <spine/Attachment.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct spTimeline spTimeline;
 struct spSkeleton;
 
@@ -257,9 +255,6 @@ typedef spDrawOrderTimeline DrawOrderTimeline;
 #define DrawOrderTimeline_setFrame(...) spDrawOrderTimeline_setFrame(__VA_ARGS__)
 #endif
 
-<<<<<<< HEAD
-}} // namespace cocos2d { namespace extension {
-=======
 /**/
 
 typedef struct {
@@ -285,6 +280,5 @@ typedef spFFDTimeline FFDTimeline;
 #ifdef __cplusplus
 }
 #endif
->>>>>>> 0a275f0ac78ae3aa0a54c0128ce6b389797fd33e
 
 #endif /* SPINE_ANIMATION_H_ */

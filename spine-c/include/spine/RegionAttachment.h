@@ -35,8 +35,6 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
-namespace cocos2d { namespace extension {
-
 typedef enum {
 	SP_VERTEX_X1 = 0, SP_VERTEX_Y1, SP_VERTEX_X2, SP_VERTEX_Y2, SP_VERTEX_X3, SP_VERTEX_Y3, SP_VERTEX_X4, SP_VERTEX_Y4
 } spVertexIndex;
@@ -78,7 +76,5 @@ typedef spRegionAttachment RegionAttachment;
 #define RegionAttachment_updateOffset(...) spRegionAttachment_updateOffset(__VA_ARGS__)
 #define RegionAttachment_computeWorldVertices(...) spRegionAttachment_computeWorldVertices(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_REGIONATTACHMENT_H_ */

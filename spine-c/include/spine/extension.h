@@ -76,8 +76,6 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/AnimationState.h>
 
-namespace cocos2d { namespace extension {
-
 /*
  * Functions that must be implemented:
  */
@@ -172,7 +170,5 @@ void _spCurveTimeline_deinit (spCurveTimeline* self);
 #define _CurveTimeline_init(...) _spCurveTimeline_init(__VA_ARGS__)
 #define _CurveTimeline_deinit(...) _spCurveTimeline_deinit(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_EXTENSION_H_ */

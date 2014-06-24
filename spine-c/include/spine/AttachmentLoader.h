@@ -34,8 +34,6 @@
 #include <spine/Attachment.h>
 #include <spine/Skin.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct spAttachmentLoader spAttachmentLoader;
 struct spAttachmentLoader {
 	const char* error1;
@@ -62,7 +60,5 @@ typedef spAttachmentLoader AttachmentLoader;
 #define AttachmentLoader_dispose(...) spAttachmentLoader_dispose(__VA_ARGS__)
 #define AttachmentLoader_newAttachment(...) spAttachmentLoader_newAttachment(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ATTACHMENTLOADER_H_ */

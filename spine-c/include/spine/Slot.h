@@ -35,8 +35,6 @@
 #include <spine/Attachment.h>
 #include <spine/SlotData.h>
 
-namespace cocos2d { namespace extension {
-
 struct spSkeleton;
 
 typedef struct spSlot {
@@ -45,15 +43,12 @@ typedef struct spSlot {
 	spBone* const bone;
 	float r, g, b, a;
 	spAttachment* const attachment;
-<<<<<<< HEAD
-    spAttachment* const holdAttachment; //** For manual attachment setting. Reserve a "holding" attachment (eg. weapon, slot equipment, etc.). Added By Mimicry. 2013-10-11
-    bool isHold; //** For manual attachment setting. All spSkeleton_setAttachment invoke will set this true. Default is false. Added By Mimicry. 2013-10-20
-=======
-
 	int attachmentVerticesCapacity;
 	int attachmentVerticesCount;
 	float* attachmentVertices;
->>>>>>> 0a275f0ac78ae3aa0a54c0128ce6b389797fd33e
+
+    spAttachment* const holdAttachment; //** For manual attachment setting. Reserve a "holding" attachment (eg. weapon, slot equipment, etc.). Added By Mimicry. 2013-10-11
+    bool isHold; //** For manual attachment setting. All spSkeleton_setAttachment invoke will set this true. Default is false. Added By Mimicry. 2013-10-20
 } spSlot;
 
 spSlot* spSlot_create (spSlotData* data, struct spSkeleton* skeleton, spBone* bone);
@@ -76,7 +71,5 @@ typedef spSlot Slot;
 #define Slot_getAttachmentTime(...) spSlot_getAttachmentTime(__VA_ARGS__)
 #define Slot_setToSetupPose(...) spSlot_setToSetupPose(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SLOT_H_ */

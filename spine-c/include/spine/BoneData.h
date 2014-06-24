@@ -31,8 +31,6 @@
 #ifndef SPINE_BONEDATA_H_
 #define SPINE_BONEDATA_H_
 
-namespace cocos2d { namespace extension {
-
 typedef struct spBoneData spBoneData;
 struct spBoneData {
 	const char* const name;
@@ -52,7 +50,5 @@ typedef spBoneData BoneData;
 #define BoneData_create(...) spBoneData_create(__VA_ARGS__)
 #define BoneData_dispose(...) spBoneData_dispose(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_BONEDATA_H_ */

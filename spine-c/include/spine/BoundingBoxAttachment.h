@@ -35,8 +35,6 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct spBoundingBoxAttachment spBoundingBoxAttachment;
 struct spBoundingBoxAttachment {
 	spAttachment super;
@@ -52,7 +50,5 @@ typedef spBoundingBoxAttachment BoundingBoxAttachment;
 #define BoundingBoxAttachment_create(...) spBoundingBoxAttachment_create(__VA_ARGS__)
 #define BoundingBoxAttachment_computeWorldVertices(...) spBoundingBoxAttachment_computeWorldVertices(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_BOUNDINGBOXATTACHMENT_H_ */

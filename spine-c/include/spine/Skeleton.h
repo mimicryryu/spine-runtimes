@@ -35,8 +35,6 @@
 #include <spine/Slot.h>
 #include <spine/Skin.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct spSkeleton spSkeleton;
 struct spSkeleton {
 	spSkeletonData* const data;
@@ -111,7 +109,5 @@ typedef spSkeleton Skeleton;
 #define Skeleton_setAttachment(...) spSkeleton_setAttachment(__VA_ARGS__)
 #define Skeleton_update(...) spSkeleton_update(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SKELETON_H_*/

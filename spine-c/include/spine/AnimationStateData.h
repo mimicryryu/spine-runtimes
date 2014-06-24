@@ -34,8 +34,6 @@
 #include <spine/Animation.h>
 #include <spine/SkeletonData.h>
 
-namespace cocos2d { namespace extension {
-
 typedef struct {
 	spSkeletonData* const skeletonData;
 	float defaultMix;
@@ -58,7 +56,5 @@ typedef spAnimationStateData AnimationStateData;
 #define AnimationStateData_setMix(...) spAnimationStateData_setMix(__VA_ARGS__)
 #define AnimationStateData_getMix(...) spAnimationStateData_getMix(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ANIMATIONSTATEDATA_H_ */

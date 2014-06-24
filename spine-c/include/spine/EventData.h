@@ -31,8 +31,6 @@
 #ifndef SPINE_EVENTDATA_H_
 #define SPINE_EVENTDATA_H_
 
-namespace cocos2d { namespace extension {
-
 typedef struct spEventData spEventData;
 struct spEventData {
 	const char* const name;
@@ -49,7 +47,5 @@ typedef spEventData EventData;
 #define EventData_create(...) spEventData_create(__VA_ARGS__)
 #define EventData_dispose(...) spEventData_dispose(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_EVENTDATA_H_ */

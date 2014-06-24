@@ -31,8 +31,6 @@
 #ifndef SPINE_ATTACHMENT_H_
 #define SPINE_ATTACHMENT_H_
 
-namespace cocos2d { namespace extension {
-
 struct spSlot;
 
 typedef enum {
@@ -58,7 +56,5 @@ typedef spAttachmentType AttachmentType;
 typedef spAttachment Attachment;
 #define Attachment_dispose(...) spAttachment_dispose(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_ATTACHMENT_H_ */

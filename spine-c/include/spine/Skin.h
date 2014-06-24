@@ -33,8 +33,6 @@
 
 #include <spine/Attachment.h>
 
-namespace cocos2d { namespace extension {
-
 struct spSkeleton;
 
 typedef struct {
@@ -67,7 +65,5 @@ typedef spSkin Skin;
 #define Skin_getAttachmentName(...) spSkin_getAttachmentName(__VA_ARGS__)
 #define Skin_attachAll(...) spSkin_attachAll(__VA_ARGS__)
 #endif
-
-}} // namespace cocos2d { namespace extension {
 
 #endif /* SPINE_SKIN_H_ */
