@@ -32,6 +32,7 @@
 #define SPINE_SKIN_H_
 
 #include <spine/Attachment.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus //** Mimicry. 06-24-2014
 extern "C" {
@@ -41,6 +42,7 @@ struct spSkeleton;
 
 typedef struct {
 	const char* const name;
+    bool isExtraSkin; //** Mimicry.
 } spSkin;
 
 spSkin* spSkin_create (const char* name);

@@ -163,10 +163,6 @@ int spSkeleton_setSkinByName (spSkeleton* self, const char* skinName) {
 }
 
 void spSkeleton_setSkin (spSkeleton* self, spSkin* newSkin) {
-    //** Added by Mimicry. 09-30-2013 -->
-    //if (newSkin) {
-    //    spSkin_attachAll(newSkin, self, self->skin);
-    //}//** <-- Added by Mimicry. 09-30-2013
 	if (newSkin) {
 		if (self->skin)
 			spSkin_attachAll(newSkin, self, self->skin);
@@ -182,6 +178,9 @@ void spSkeleton_setSkin (spSkeleton* self, spSkin* newSkin) {
 			}
 		}
 	}
+    if (newSkin && newSkin->isExtraSkin) {//** Mimicry. 06-26-2014. Extra skin only contribute extra attachments to extra slots
+        return;
+    }
 	CONST_CAST(spSkin*, self->skin) = newSkin;
 }
 

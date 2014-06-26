@@ -63,6 +63,7 @@ typedef struct {
 spSkin* spSkin_create (const char* name) {
 	spSkin* self = SUPER(NEW(_spSkin));
 	MALLOC_STR(self->name, name);
+    self->isExtraSkin = (name[0] == '#'); //** Mimicry. 06-26-2014. Skin with name starting with '#' is an extra skin
 	return self;
 }
 
@@ -87,7 +88,7 @@ void spSkin_addAttachment (spSkin* self, int slotIndex, const char* name, spAtta
 spAttachment* spSkin_getAttachment (const spSkin* self, int slotIndex, const char* name) {
 	const _Entry* entry = SUB_CAST(_spSkin, self)->entries;
 	while (entry) {
-		if (entry->slotIndex == slotIndex && (strcmp(entry->name, name) == 0 || (entry->attachment && strcmp(entry->attachment->name, name) == 0))) return entry->attachment; //** Modified by Mimicry. 2013-10-19
+		if (entry->slotIndex == slotIndex && strcmp(entry->name, name) == 0) return entry->attachment;
 		entry = entry->next;
 	}
 	return 0;
@@ -121,33 +122,43 @@ int spSkin_getAttachmentCount(const spSkin* self, int slotIndex) {
 //** <-- Added By Mimicry. 2013-10-11
     
 void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* oldSkin) {
-    //	const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
-    const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013
+//    const _Entry *entry = SUB_CAST(_spSkin, oldSkin)->entries; //** Commented by Mimicry. 09-30-2013
+    const _Entry *entry = SUB_CAST(_spSkin, self) ->entries; //** Added by Mimicry. 09-30-2013. Use the entries of the new skin since the old skin and the new one may has different entries.
     //** Added by Mimicry. 09-30-2013 -->
     const spSkin* default_skin = skeleton->data->defaultSkin;
-    if (default_skin) {
+    if (!self->isExtraSkin && default_skin) {
         for (int i = 0; i != skeleton->slotCount; ++i) {
-            if (skeleton->data->slots[i]->attachmentName != NULL
-                && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
-                // Hide default invisible attachment
+            if (skeleton->data->slots[i]->attachmentName != NULL && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
+                // Hide default invisible attachment on default skin
                 spSlot_setAttachment(skeleton->slots[i],0);
             }
         }
     }//** <-- Added by Mimicry. 09-30-2013
     while (entry) {
         spSlot *slot = skeleton->slots[entry->slotIndex];
-        //		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013
+        //** Mimicry. 06-26-2014 -->
+        //** Extra skin only contribute extra attachment to extra slot
+        if (self->isExtraSkin && !slot->data->isExtraSlot) {
+            entry = entry->next;
+            continue;
+        }
+        //** <-- Mimicry. 06-26-2014
+
+        //		if (slot->attachment == entry->attachment) { //** Commented by Mimicry. 09-30-2013. Apply all entries forcibly.
         spAttachment *attachment = spSkin_getAttachment(self, entry->slotIndex, entry->name);
         if (attachment) spSlot_setAttachment(slot, attachment);
-        else spSlot_setAttachment(slot, 0);//** Added by Mimicry. 09-30-2013
         //		} //** Commented by Mimicry. 09-30-2013
+        
+        //** Mimicry. 06-26-2014 -->
+        if (!attachment || !slot->data->attachmentName) {
+            spSlot_setAttachment(slot, 0);
+        }
+        if (self->isExtraSkin && slot->data->isExtraSlot) {
+            CONST_CAST(spAttachment*, slot->holdAttachment) = slot->attachment;
+            slot->isHold = (slot->attachment!=NULL);
+        }
+        //** <-- Mimicry. 06-26-2014
+
         entry = entry->next;
     }
-    //** Added by Mimicry. 09-30-2013 -->
-    for (int i = 0; i != skeleton->slotCount; ++i) {
-        if (!skeleton->slots[i]->data->attachmentName) {
-            // Hide default invisible attachment
-            spSlot_setAttachment(skeleton->slots[i],0);
-        }
-    }//** <-- Added by Mimicry. 09-30-2013
 }

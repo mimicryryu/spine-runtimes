@@ -39,6 +39,7 @@ spSlotData* spSlotData_create (const char* name, spBoneData* boneData) {
 	self->g = 1;
 	self->b = 1;
 	self->a = 1;
+    self->isExtraSlot = (name[0] == '#');
 	return self;
 }
 

@@ -497,6 +497,22 @@ spSkeletonData* spSkeletonJson_readSkeletonData (spSkeletonJson* self, const cha
 						_spSkeletonJson_setError(self, root, "Unknown attachment type: ", typeString);
 						return 0;
 					}
+                    
+                    //** Mimicry. 06-26-2014. -->
+                    const spSlotData* slotData = spSkeletonData_findSlot(skeletonData, attachmentsMap->name);
+                    if (skin->isExtraSkin) {
+                        // Extra skin only receive region/mesh attachment in extra slot
+                        if(!slotData->isExtraSlot && (type == SP_ATTACHMENT_REGION || type == SP_ATTACHMENT_MESH || type == SP_ATTACHMENT_SKINNED_MESH)) {
+                            continue;
+                        }
+                    }
+                    else {
+                        // Normal skin do not receive region/mesh attachment in extra slot
+                        if(slotData->isExtraSlot && (type == SP_ATTACHMENT_REGION || type == SP_ATTACHMENT_MESH || type == SP_ATTACHMENT_SKINNED_MESH)) {
+                            continue;
+                        }
+                    }
+                    //** <-- Mimicry. 06-26-2014.
 
 					attachment = spAttachmentLoader_newAttachment(self->attachmentLoader, skin, type, attachmentName, path);
 					if (!attachment) {

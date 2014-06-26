@@ -32,6 +32,7 @@
 #define SPINE_SLOTDATA_H_
 
 #include <spine/BoneData.h>
+#include <stdbool.h>
 
 typedef struct {
 	const char* const name;
@@ -39,6 +40,7 @@ typedef struct {
 	const char* attachmentName;
 	float r, g, b, a;
 	int/*bool*/additiveBlending;
+    bool isExtraSlot; //** Mimicry
 } spSlotData;
 
 spSlotData* spSlotData_create (const char* name, spBoneData* boneData);
