@@ -36,6 +36,10 @@
 #include <spine/SlotData.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus //** Mimicry. 06-27-2014
+extern "C" {
+#endif
+
 struct spSkeleton;
 
 typedef struct spSlot {
@@ -71,6 +75,10 @@ typedef spSlot Slot;
 #define Slot_setAttachmentTime(...) spSlot_setAttachmentTime(__VA_ARGS__)
 #define Slot_getAttachmentTime(...) spSlot_getAttachmentTime(__VA_ARGS__)
 #define Slot_setToSetupPose(...) spSlot_setToSetupPose(__VA_ARGS__)
+#endif
+    
+#ifdef __cplusplus //** Mimicry. 06-27-2014
+}
 #endif
 
 #endif /* SPINE_SLOT_H_ */

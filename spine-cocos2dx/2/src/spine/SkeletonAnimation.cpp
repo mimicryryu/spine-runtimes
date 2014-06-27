@@ -181,16 +181,16 @@ void SkeletonAnimation::clearTrack (int trackIndex) {
 void SkeletonAnimation::onAnimationStateEvent (int trackIndex, spEventType type, spEvent* event, int loopCount) {
 	switch (type) {
 	case SP_ANIMATION_START:
-		if (startListener) startListener(trackIndex);
+		if (startListener) (*startListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_END:
-		if (endListener) endListener(trackIndex);
+		if (endListener) (*endListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_COMPLETE:
-		if (completeListener) completeListener(trackIndex, loopCount);
+		if (completeListener) (*completeListener)(trackIndex, loopCount);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_EVENT:
-		if (eventListener) eventListener(trackIndex, event);
+		if (eventListener) (*eventListener)(trackIndex, event);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	}
 }
@@ -201,16 +201,16 @@ void SkeletonAnimation::onTrackEntryEvent (int trackIndex, spEventType type, spE
 	_TrackEntryListeners* listeners = (_TrackEntryListeners*)entry->rendererObject;
 	switch (type) {
 	case SP_ANIMATION_START:
-		if (listeners->startListener) listeners->startListener(trackIndex);
+		if (listeners->startListener) (*listeners->startListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_END:
-		if (listeners->endListener) listeners->endListener(trackIndex);
+		if (listeners->endListener) (*listeners->endListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_COMPLETE:
-		if (listeners->completeListener) listeners->completeListener(trackIndex, loopCount);
+		if (listeners->completeListener) (*listeners->completeListener)(trackIndex, loopCount);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	case SP_ANIMATION_EVENT:
-		if (listeners->eventListener) listeners->eventListener(trackIndex, event);
+		if (listeners->eventListener) (*listeners->eventListener)(trackIndex, event);//** Mimicry. 06-27-2014. Compatible with c99
 		break;
 	}
 }
