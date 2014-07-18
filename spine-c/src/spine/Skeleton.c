@@ -199,6 +199,16 @@ spAttachment* spSkeleton_getAttachmentForSlotIndex (const spSkeleton* self, int 
 		spAttachment *attachment = spSkin_getAttachment(self->data->defaultSkin, slotIndex, attachmentName);
 		if (attachment) return attachment;
 	}
+    //** Mimicry. 07-18-2014. Also search in extra skins -->
+    for (int i = 0; i!=self->data->skinCount; ++i) {
+        spSkin* extraSkin = self->data->skins[i];
+        if (!extraSkin->isExtraSkin) {
+            continue;
+        }
+        spAttachment *attachment = spSkin_getAttachment(extraSkin, slotIndex, attachmentName);
+		if (attachment) return attachment;
+    }
+    //** <-- Mimicry. 07-18-2014. Also search in extra skins
 	return 0;
 }
 
