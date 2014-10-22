@@ -25,6 +25,10 @@
 #ifndef SPINE_JSON_H_
 #define SPINE_JSON_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Json Types: */
 #define Json_False 0
 #define Json_True 1
@@ -34,10 +38,17 @@
 #define Json_Array 5
 #define Json_Object 6
 
+#ifndef SPINE_JSON_HAVE_PREV
+/* Spine doesn't use the "prev" link in the Json sibling lists. */
+#define SPINE_JSON_HAVE_PREV 0
+#endif
+
 /* The Json structure: */
 typedef struct Json {
 	struct Json* next;
+#if SPINE_JSON_HAVE_PREV
 	struct Json* prev; /* next/prev allow you to walk array/object chains. Alternatively, use getSize/getItem */
+#endif
 	struct Json* child; /* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
 
 	int type; /* The type of the item, as above. */
@@ -64,5 +75,9 @@ int Json_getInt (Json* json, const char* name, int defaultValue);
 
 /* For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make sense of it. Defined when Json_create() returns 0. 0 when Json_create() succeeds. */
 const char* Json_getError (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SPINE_JSON_H_ */

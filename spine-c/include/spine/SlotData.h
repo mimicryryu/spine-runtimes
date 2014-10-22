@@ -32,7 +32,10 @@
 #define SPINE_SLOTDATA_H_
 
 #include <spine/BoneData.h>
-#include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
 	const char* const name;
@@ -54,6 +57,10 @@ typedef spSlotData SlotData;
 #define SlotData_create(...) spSlotData_create(__VA_ARGS__)
 #define SlotData_dispose(...) spSlotData_dispose(__VA_ARGS__)
 #define SlotData_setAttachmentName(...) spSlotData_setAttachmentName(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SPINE_SLOTDATA_H_ */

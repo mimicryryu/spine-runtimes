@@ -35,7 +35,7 @@
 #include <spine/AnimationStateData.h>
 #include <spine/Event.h>
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -67,7 +67,7 @@ struct spAnimationState {
 	float timeScale;
 	spAnimationStateListener listener;
 
-	int trackCount;
+	int tracksCount;
 	spTrackEntry** tracks;
 
 	void* rendererObject;
@@ -118,8 +118,8 @@ typedef spAnimationState AnimationState;
 #define AnimationState_addAnimation(...) spAnimationState_addAnimation(__VA_ARGS__)
 #define AnimationState_getCurrent(...) spAnimationState_getCurrent(__VA_ARGS__)
 #endif
-    
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+
+#ifdef __cplusplus
 }
 #endif
 

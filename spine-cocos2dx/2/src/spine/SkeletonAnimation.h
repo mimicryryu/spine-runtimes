@@ -37,75 +37,10 @@
 
 namespace spine {
 
-/** Mimicry 06-24-2014 --> **/
-/* compatible with c99
 typedef std::function<void(int trackIndex)> StartListener;
 typedef std::function<void(int trackIndex)> EndListener;
 typedef std::function<void(int trackIndex, int loopCount)> CompleteListener;
 typedef std::function<void(int trackIndex, spEvent* event)> EventListener;
-*/
-    typedef void (cocos2d::CCObject::*SPINEANI_START_LISTENER) (int trackIndex);
-#define spineAniStart_selector(_SELECTOR) (SPINEANI_START_LISTENER)(&_SELECTOR)
-    class _StartListener{
-    public:
-        _StartListener():target(NULL),listener(NULL){}
-        void operator()(int trackIndex) {
-            if (target) {
-                (target->*listener)(trackIndex);
-            }
-        }
-        cocos2d::CCObject* target;
-        SPINEANI_START_LISTENER listener;
-    };
-    typedef _StartListener* StartListener;
-    
-    
-    typedef void (cocos2d::CCObject::*SPINEANI_END_LISTENER) (int trackIndex);
-#define spineAniEnd_selector(_SELECTOR) (SPINEANI_END_LISTENER)(&_SELECTOR)
-    class _EndListener{
-    public:
-        _EndListener():target(NULL),listener(NULL){}
-        void operator()(int trackIndex) {
-            if (target) {
-                (target->*listener)(trackIndex);
-            }
-        }
-        cocos2d::CCObject* target;
-        SPINEANI_END_LISTENER listener;
-    };
-    typedef _EndListener* EndListener;
-    
-    typedef void (cocos2d::CCObject::*SPINEANI_COMPLETE_LISTENER) (int trackIndex, int loopCount);
-#define spineAniComplete_selector(_SELECTOR) (SPINEANI_COMPLETE_LISTENER)(&_SELECTOR)
-    class _CompleteListener{
-    public:
-        _CompleteListener():target(NULL),listener(NULL){}
-        void operator()(int trackIndex, int loopCount) {
-            if (target) {
-                (target->*listener)(trackIndex, loopCount);
-            }
-        }
-        cocos2d::CCObject* target;
-        SPINEANI_COMPLETE_LISTENER listener;
-    };
-    typedef _CompleteListener* CompleteListener;
-    
-    typedef void (cocos2d::CCObject::*SPINEANI_EVENT_LISTENER) (int trackIndex, spEvent* event);
-#define spineAniEvent_selector(_SELECTOR) (SPINEANI_EVENT_LISTENER)(&_SELECTOR)
-    class _EventListener{
-    public:
-        _EventListener():target(NULL),listener(NULL){}
-        void operator()(int trackIndex, spEvent* event) {
-            if (target) {
-                (target->*listener)(trackIndex, event);
-            }
-        }
-        cocos2d::CCObject* target;
-        SPINEANI_EVENT_LISTENER listener;
-    };
-    typedef _EventListener* EventListener;
-/** <-- Mimicry 06-24-2014 **/
-
 
 /** Draws an animated skeleton, providing an AnimationState for applying one or more animations and queuing animations to be
   * played later. */

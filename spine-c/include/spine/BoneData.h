@@ -31,6 +31,10 @@
 #ifndef SPINE_BONEDATA_H_
 #define SPINE_BONEDATA_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct spBoneData spBoneData;
 struct spBoneData {
 	const char* const name;
@@ -39,6 +43,7 @@ struct spBoneData {
 	float x, y;
 	float rotation;
 	float scaleX, scaleY;
+	int/*bool*/flipX, flipY;
 	int/*bool*/inheritScale, inheritRotation;
 };
 
@@ -49,6 +54,10 @@ void spBoneData_dispose (spBoneData* self);
 typedef spBoneData BoneData;
 #define BoneData_create(...) spBoneData_create(__VA_ARGS__)
 #define BoneData_dispose(...) spBoneData_dispose(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SPINE_BONEDATA_H_ */

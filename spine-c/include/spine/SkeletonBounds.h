@@ -34,6 +34,10 @@
 #include <spine/BoundingBoxAttachment.h>
 #include <spine/Skeleton.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	float* const vertices;
 	int count;
@@ -99,6 +103,10 @@ typedef spSkeletonBounds SkeletonBounds;
 #define SkeletonBounds_containsPoint(...) spSkeletonBounds_containsPoint(__VA_ARGS__)
 #define SkeletonBounds_intersectsSegment(...) spSkeletonBounds_intersectsSegment(__VA_ARGS__)
 #define SkeletonBounds_getPolygon(...) spSkeletonBounds_getPolygon(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SPINE_SKELETONBOUNDS_H_ */

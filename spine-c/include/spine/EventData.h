@@ -31,6 +31,10 @@
 #ifndef SPINE_EVENTDATA_H_
 #define SPINE_EVENTDATA_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct spEventData spEventData;
 struct spEventData {
 	const char* const name;
@@ -46,6 +50,10 @@ void spEventData_dispose (spEventData* self);
 typedef spEventData EventData;
 #define EventData_create(...) spEventData_create(__VA_ARGS__)
 #define EventData_dispose(...) spEventData_dispose(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SPINE_EVENTDATA_H_ */

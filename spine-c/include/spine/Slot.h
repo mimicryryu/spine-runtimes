@@ -34,20 +34,17 @@
 #include <spine/Bone.h>
 #include <spine/Attachment.h>
 #include <spine/SlotData.h>
-#include <stdbool.h>
 
-#ifdef __cplusplus //** Mimicry. 06-27-2014
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-struct spSkeleton;
-
 typedef struct spSlot {
 	spSlotData* const data;
-	struct spSkeleton* const skeleton;
 	spBone* const bone;
 	float r, g, b, a;
 	spAttachment* const attachment;
+
 	int attachmentVerticesCapacity;
 	int attachmentVerticesCount;
 	float* attachmentVertices;
@@ -56,7 +53,7 @@ typedef struct spSlot {
     bool isHold; //** For manual attachment setting. All spSkeleton_setAttachment invoke will set this true. Default is false. Added By Mimicry. 2013-10-20
 } spSlot;
 
-spSlot* spSlot_create (spSlotData* data, struct spSkeleton* skeleton, spBone* bone);
+spSlot* spSlot_create (spSlotData* data, spBone* bone);
 void spSlot_dispose (spSlot* self);
 
 /* @param attachment May be 0 to clear the attachment for the slot. */
@@ -76,8 +73,8 @@ typedef spSlot Slot;
 #define Slot_getAttachmentTime(...) spSlot_getAttachmentTime(__VA_ARGS__)
 #define Slot_setToSetupPose(...) spSlot_setToSetupPose(__VA_ARGS__)
 #endif
-    
-#ifdef __cplusplus //** Mimicry. 06-27-2014
+
+#ifdef __cplusplus
 }
 #endif
 

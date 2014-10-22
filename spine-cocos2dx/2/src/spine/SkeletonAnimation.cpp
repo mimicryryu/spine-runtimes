@@ -53,8 +53,6 @@ typedef struct _TrackEntryListeners {
 	EndListener endListener;
 	CompleteListener completeListener;
 	EventListener eventListener;
-    //** Mimicry. 06-24-2014. Compatible with c99.
-    _TrackEntryListeners():startListener(NULL),endListener(NULL),completeListener(NULL),eventListener(NULL){}
 } _TrackEntryListeners;
 
 static _TrackEntryListeners* getListeners (spTrackEntry* entry) {
@@ -91,9 +89,6 @@ SkeletonAnimation* SkeletonAnimation::createWithFile (const char* skeletonDataFi
 }
 
 void SkeletonAnimation::initialize () {
-    //** Mimicry. 06-24-2014. Compatible with c99.
-    startListener = NULL;endListener = NULL; completeListener = NULL; eventListener = NULL;
-
 	ownsAnimationStateData = true;
 	state = spAnimationState_create(spAnimationStateData_create(skeleton->data));
 	state->rendererObject = this;
@@ -181,16 +176,16 @@ void SkeletonAnimation::clearTrack (int trackIndex) {
 void SkeletonAnimation::onAnimationStateEvent (int trackIndex, spEventType type, spEvent* event, int loopCount) {
 	switch (type) {
 	case SP_ANIMATION_START:
-		if (startListener) (*startListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
+		if (startListener) startListener(trackIndex);
 		break;
 	case SP_ANIMATION_END:
-		if (endListener) (*endListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
+		if (endListener) endListener(trackIndex);
 		break;
 	case SP_ANIMATION_COMPLETE:
-		if (completeListener) (*completeListener)(trackIndex, loopCount);//** Mimicry. 06-27-2014. Compatible with c99
+		if (completeListener) completeListener(trackIndex, loopCount);
 		break;
 	case SP_ANIMATION_EVENT:
-		if (eventListener) (*eventListener)(trackIndex, event);//** Mimicry. 06-27-2014. Compatible with c99
+		if (eventListener) eventListener(trackIndex, event);
 		break;
 	}
 }
@@ -201,16 +196,16 @@ void SkeletonAnimation::onTrackEntryEvent (int trackIndex, spEventType type, spE
 	_TrackEntryListeners* listeners = (_TrackEntryListeners*)entry->rendererObject;
 	switch (type) {
 	case SP_ANIMATION_START:
-		if (listeners->startListener) (*listeners->startListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
+		if (listeners->startListener) listeners->startListener(trackIndex);
 		break;
 	case SP_ANIMATION_END:
-		if (listeners->endListener) (*listeners->endListener)(trackIndex);//** Mimicry. 06-27-2014. Compatible with c99
+		if (listeners->endListener) listeners->endListener(trackIndex);
 		break;
 	case SP_ANIMATION_COMPLETE:
-		if (listeners->completeListener) (*listeners->completeListener)(trackIndex, loopCount);//** Mimicry. 06-27-2014. Compatible with c99
+		if (listeners->completeListener) listeners->completeListener(trackIndex, loopCount);
 		break;
 	case SP_ANIMATION_EVENT:
-		if (listeners->eventListener) (*listeners->eventListener)(trackIndex, event);//** Mimicry. 06-27-2014. Compatible with c99
+		if (listeners->eventListener) listeners->eventListener(trackIndex, event);
 		break;
 	}
 }

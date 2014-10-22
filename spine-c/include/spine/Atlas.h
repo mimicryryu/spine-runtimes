@@ -31,7 +31,7 @@
 #ifndef SPINE_ATLAS_H_
 #define SPINE_ATLAS_H_
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -158,8 +158,8 @@ typedef spAtlas Atlas;
 #define Atlas_dispose(...) spAtlas_dispose(__VA_ARGS__)
 #define Atlas_findRegion(...) spAtlas_findRegion(__VA_ARGS__)
 #endif
-    
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+
+#ifdef __cplusplus
 }
 #endif
 

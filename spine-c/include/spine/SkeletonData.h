@@ -36,27 +36,35 @@
 #include <spine/Skin.h>
 #include <spine/EventData.h>
 #include <spine/Animation.h>
+#include <spine/IkConstraintData.h>
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-	int boneCount;
+	const char* version;
+	const char* hash;
+	float width, height;
+
+	int bonesCount;
 	spBoneData** bones;
 
-	int slotCount;
+	int slotsCount;
 	spSlotData** slots;
 
-	int skinCount;
+	int skinsCount;
 	spSkin** skins;
 	spSkin* defaultSkin;
 
-	int eventCount;
+	int eventsCount;
 	spEventData** events;
 
-	int animationCount;
+	int animationsCount;
 	spAnimation** animations;
+
+	int ikConstraintsCount;
+	spIkConstraintData** ikConstraints;
 } spSkeletonData;
 
 spSkeletonData* spSkeletonData_create ();
@@ -74,6 +82,8 @@ spEventData* spSkeletonData_findEvent (const spSkeletonData* self, const char* e
 
 spAnimation* spSkeletonData_findAnimation (const spSkeletonData* self, const char* animationName);
 
+spIkConstraintData* spSkeletonData_findIkConstraint (const spSkeletonData* self, const char* ikConstraintName);
+
 #ifdef SPINE_SHORT_NAMES
 typedef spSkeletonData SkeletonData;
 #define SkeletonData_create(...) spSkeletonData_create(__VA_ARGS__)
@@ -86,8 +96,8 @@ typedef spSkeletonData SkeletonData;
 #define SkeletonData_findEvent(...) spSkeletonData_findEvent(__VA_ARGS__)
 #define SkeletonData_findAnimation(...) spSkeletonData_findAnimation(__VA_ARGS__)
 #endif
-    
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+
+#ifdef __cplusplus
 }
 #endif
 

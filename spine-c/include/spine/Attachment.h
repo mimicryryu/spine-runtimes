@@ -31,6 +31,10 @@
 #ifndef SPINE_ATTACHMENT_H_
 #define SPINE_ATTACHMENT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct spSlot;
 
 typedef enum {
@@ -55,6 +59,10 @@ typedef spAttachmentType AttachmentType;
 #define ATTACHMENT_SKINNED_MESH SP_ATTACHMENT_SKINNED_MESH
 typedef spAttachment Attachment;
 #define Attachment_dispose(...) spAttachment_dispose(__VA_ARGS__)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* SPINE_ATTACHMENT_H_ */

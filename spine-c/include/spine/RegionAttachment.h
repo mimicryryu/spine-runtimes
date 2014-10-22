@@ -35,8 +35,8 @@
 #include <spine/Atlas.h>
 #include <spine/Slot.h>
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
-    extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef enum {
@@ -62,7 +62,7 @@ struct spRegionAttachment {
 spRegionAttachment* spRegionAttachment_create (const char* name);
 void spRegionAttachment_setUVs (spRegionAttachment* self, float u, float v, float u2, float v2, int/*bool*/rotate);
 void spRegionAttachment_updateOffset (spRegionAttachment* self);
-void spRegionAttachment_computeWorldVertices (spRegionAttachment* self, float x, float y, spBone* bone, float* vertices);
+void spRegionAttachment_computeWorldVertices (spRegionAttachment* self, spBone* bone, float* vertices);
 
 #ifdef SPINE_SHORT_NAMES
 typedef spVertexIndex VertexIndex;
@@ -81,7 +81,7 @@ typedef spRegionAttachment RegionAttachment;
 #define RegionAttachment_computeWorldVertices(...) spRegionAttachment_computeWorldVertices(__VA_ARGS__)
 #endif
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 }
 #endif
 

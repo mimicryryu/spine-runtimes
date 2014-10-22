@@ -37,16 +37,10 @@
 
 namespace cocos2d { namespace extension {
 
-<<<<<<< HEAD:spine-cocos2dx/src/spine/CCSkeletonAnimation.h
-class CCSkeletonAnimation;
-typedef void (cocos2d::CCObject::*SEL_AnimationStateEvent)(CCSkeletonAnimation* node, int trackIndex, spEventType type, spEvent* event, int loopCount);
-#define animationStateEvent_selector(_SELECTOR) (SEL_AnimationStateEvent)(&_SELECTOR)
-=======
 typedef std::function<void(int trackIndex)> StartListener;
 typedef std::function<void(int trackIndex)> EndListener;
 typedef std::function<void(int trackIndex, int loopCount)> CompleteListener;
 typedef std::function<void(int trackIndex, spEvent* event)> EventListener;
->>>>>>> 6b9d514ca7e958f3a5d394387eae1f3b6965a151:spine-cocos2dx/3.1/src/spine/SkeletonAnimation.h
 
 /** Draws an animated skeleton, providing an AnimationState for applying one or more animations and queuing animations to be
   * played later. */

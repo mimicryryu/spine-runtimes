@@ -34,8 +34,8 @@
 #include <spine/Attachment.h>
 #include <spine/Skin.h>
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
-    extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef struct spAttachmentLoader spAttachmentLoader;
@@ -64,8 +64,8 @@ typedef spAttachmentLoader AttachmentLoader;
 #define AttachmentLoader_dispose(...) spAttachmentLoader_dispose(__VA_ARGS__)
 #define AttachmentLoader_newAttachment(...) spAttachmentLoader_newAttachment(__VA_ARGS__)
 #endif
-    
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+
+#ifdef __cplusplus
 }
 #endif
 

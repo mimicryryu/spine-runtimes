@@ -32,9 +32,8 @@
 #define SPINE_SKIN_H_
 
 #include <spine/Attachment.h>
-#include <stdbool.h>
 
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -72,8 +71,7 @@ typedef spSkin Skin;
 #define Skin_attachAll(...) spSkin_attachAll(__VA_ARGS__)
 #endif
 
-    
-#ifdef __cplusplus //** Mimicry. 06-24-2014
+#ifdef __cplusplus
 }
 #endif
 
