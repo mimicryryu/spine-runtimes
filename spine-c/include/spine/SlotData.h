@@ -32,6 +32,7 @@
 #define SPINE_SLOTDATA_H_
 
 #include <spine/BoneData.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {

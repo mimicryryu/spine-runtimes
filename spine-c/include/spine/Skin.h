@@ -32,6 +32,7 @@
 #define SPINE_SKIN_H_
 
 #include <spine/Attachment.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {

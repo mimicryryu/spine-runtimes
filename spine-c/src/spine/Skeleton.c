@@ -312,7 +312,7 @@ spAttachment* spSkeleton_getAttachmentForSlotIndex (const spSkeleton* self, int 
 		if (attachment) return attachment;
 	}
     //** Mimicry. 07-18-2014. Also search in extra skins -->
-    for (int i = 0; i!=self->data->skinCount; ++i) {
+    for (int i = 0; i!=self->data->skinsCount; ++i) {
         spSkin* extraSkin = self->data->skins[i];
         if (!extraSkin->isExtraSkin) {
             continue;

@@ -127,7 +127,7 @@ void spSkin_attachAll (const spSkin* self, spSkeleton* skeleton, const spSkin* o
     //** Added by Mimicry. 09-30-2013 -->
     const spSkin* default_skin = skeleton->data->defaultSkin;
     if (!self->isExtraSkin && default_skin) {
-        for (int i = 0; i != skeleton->slotCount; ++i) {
+        for (int i = 0; i != skeleton->slotsCount; ++i) {
             if (skeleton->data->slots[i]->attachmentName != NULL && spSkin_getAttachment(default_skin, i, skeleton->data->slots[i]->attachmentName) == NULL) {
                 // Hide default invisible attachment on default skin
                 spSlot_setAttachment(skeleton->slots[i],0);
