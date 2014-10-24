@@ -479,7 +479,7 @@ void _spAttachmentTimeline_apply (const spTimeline* timeline, spSkeleton* skelet
 
 	frameIndex = time >= self->frames[self->framesCount - 1] ?
 		self->framesCount - 1 : binarySearch1(self->frames, self->framesCount, time) - 1;
-	if (self->frames[frameIndex] < lastTime) return;
+//	if (self->frames[frameIndex] < lastTime) return; // ** Commented by Mimicry. 10-21-2014. Fix holding attachment refresh issue after skin changing
 
 	attachmentName = self->attachmentNames[frameIndex];
 //    spSlot_setAttachment(skeleton->slots[self->slotIndex], // ** Commented by Mimicry. 10-21-2014
@@ -619,7 +619,7 @@ void _spDrawOrderTimeline_apply (const spTimeline* timeline, spSkeleton* skeleto
 
 	drawOrderToSetupIndex = self->drawOrders[frameIndex];
 	if (!drawOrderToSetupIndex)
-		memcpy(skeleton->drawOrder, skeleton->slots, self->slotsCount * sizeof(int));
+		memcpy(skeleton->drawOrder, skeleton->slots, self->slotsCount * sizeof(spSlot*)); //** Fix pointer size issue. Mimicry. 10-24-2014
 	else {
 		for (i = 0; i < self->slotsCount; ++i)
 			skeleton->drawOrder[i] = skeleton->slots[drawOrderToSetupIndex[i]];
