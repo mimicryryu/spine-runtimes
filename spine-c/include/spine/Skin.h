@@ -40,7 +40,7 @@ extern "C" {
 
 struct spSkeleton;
 
-typedef struct {
+typedef struct spSkin {
 	const char* const name;
     bool isExtraSkin; //** Mimicry.
 } spSkin;

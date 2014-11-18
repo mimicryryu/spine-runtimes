@@ -147,8 +147,8 @@ spine.Bone.prototype = {
 			m11 = -m11;
 		}
 		var invDet = 1 / (m00 * m11 - m01 * m10);
-		world[0] = (dx * m00 * invDet - dy * m01 * invDet);
-		world[1] = (dy * m11 * invDet - dx * m10 * invDet);
+		world[0] = dx * m00 * invDet - dy * m01 * invDet;
+		world[1] = dy * m11 * invDet - dx * m10 * invDet;
 	},
 	localToWorld: function (local) {
 		var localX = local[0], localY = local[1];
@@ -774,10 +774,7 @@ spine.FfdTimeline.prototype = {
 		if (slot.attachment != attachment) return;
 
 		var frames = this.frames;
-		if (time < frames[0]) {
-			slot.attachmentVertices.length = 0;
-			return; // Time is before first frame.
-		}
+		if (time < frames[0]) return; // Time is before first frame.
 
 		var frameVertices = this.frameVertices;
 		var vertexCount = frameVertices[0].length;
@@ -1142,9 +1139,9 @@ spine.Skeleton.prototype = {
 		if (!skin) throw "Skin not found: " + skinName;
 		this.setSkin(skin);
 	},
-	/** Sets the skin used to look up attachments not found in the {@link SkeletonData#getDefaultSkin() default skin}. Attachments
-	 * from the new skin are attached if the corresponding attachment from the old skin was attached. If there was no old skin,
-	 * each slot's setup mode attachment is attached from the new skin.
+	/** Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}. 
+	 * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was 
+	 * no old skin, each slot's setup mode attachment is attached from the new skin.
 	 * @param newSkin May be null. */
 	setSkin: function (newSkin) {
 		if (newSkin) {
