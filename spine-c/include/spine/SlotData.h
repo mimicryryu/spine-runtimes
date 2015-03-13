@@ -45,6 +45,17 @@ typedef struct spSlotData {
 	float r, g, b, a;
 	int/*bool*/additiveBlending;
     bool isExtraSlot; //** Mimicry
+
+#ifdef __cplusplus
+	spSlotData() :
+		name(0),
+		boneData(0),
+		attachmentName(0),
+		r(0), g(0), b(0), a(0),
+		additiveBlending(0),
+        isExtraSlot(false) {
+	}
+#endif
 } spSlotData;
 
 spSlotData* spSlotData_create (const char* name, spBoneData* boneData);

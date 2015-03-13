@@ -43,6 +43,13 @@ struct spSkeleton;
 typedef struct spSkin {
 	const char* const name;
     bool isExtraSkin; //** Mimicry.
+
+#ifdef __cplusplus
+	spSkin() :
+		name(0),
+        isExtraSkin(false) {
+	}
+#endif
 } spSkin;
 
 spSkin* spSkin_create (const char* name);
