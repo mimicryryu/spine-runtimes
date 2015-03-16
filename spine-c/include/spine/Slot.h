@@ -61,7 +61,7 @@ typedef struct spSlot {
 		attachmentVerticesCapacity(0),
 		attachmentVerticesCount(0),
 		attachmentVertices(0),
-        holdAttachment(NULL),
+        holdAttachment(nullptr),
         isHold(false) {
 	}
 #endif
