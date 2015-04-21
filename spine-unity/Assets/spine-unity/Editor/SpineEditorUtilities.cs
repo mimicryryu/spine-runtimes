@@ -149,6 +149,7 @@ public class SpineEditorUtilities : AssetPostprocessor {
 	public static string editorGUIPath = "";
 	static Dictionary<int, GameObject> skeletonRendererTable;
 	static Dictionary<int, SkeletonUtilityBone> skeletonUtilityBoneTable;
+	static Dictionary<int, BoundingBoxFollower> boundingBoxFollowerTable;
 	public static float defaultScale = 0.01f;
 	public static float defaultMix = 0.2f;
 	public static string defaultShader = "Spine/Skeleton";
@@ -172,6 +173,7 @@ public class SpineEditorUtilities : AssetPostprocessor {
 
 		skeletonRendererTable = new Dictionary<int, GameObject>();
 		skeletonUtilityBoneTable = new Dictionary<int, SkeletonUtilityBone>();
+		boundingBoxFollowerTable = new Dictionary<int, BoundingBoxFollower>();
 
 		EditorApplication.hierarchyWindowChanged += HierarchyWindowChanged;
 		EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemOnGUI;
@@ -188,15 +190,19 @@ public class SpineEditorUtilities : AssetPostprocessor {
 	static void HierarchyWindowChanged () {
 		skeletonRendererTable.Clear();
 		skeletonUtilityBoneTable.Clear();
+		boundingBoxFollowerTable.Clear();
 
 		SkeletonRenderer[] arr = Object.FindObjectsOfType<SkeletonRenderer>();
-
 		foreach (SkeletonRenderer r in arr)
 			skeletonRendererTable.Add(r.gameObject.GetInstanceID(), r.gameObject);
 
 		SkeletonUtilityBone[] boneArr = Object.FindObjectsOfType<SkeletonUtilityBone>();
 		foreach (SkeletonUtilityBone b in boneArr)
 			skeletonUtilityBoneTable.Add(b.gameObject.GetInstanceID(), b);
+
+		BoundingBoxFollower[] bbfArr = Object.FindObjectsOfType<BoundingBoxFollower>();
+		foreach (BoundingBoxFollower bbf in bbfArr)
+			boundingBoxFollowerTable.Add(bbf.gameObject.GetInstanceID(), bbf);
 	}
 
 	static void HierarchyWindowItemOnGUI (int instanceId, Rect selectionRect) {
@@ -226,6 +232,21 @@ public class SpineEditorUtilities : AssetPostprocessor {
 				}
 			}
 
+		} else if (boundingBoxFollowerTable.ContainsKey(instanceId)) {
+			Rect r = new Rect(selectionRect);
+			r.x -= 26;
+
+			if (boundingBoxFollowerTable[instanceId] != null) {
+				if (boundingBoxFollowerTable[instanceId].transform.childCount == 0)
+					r.x += 13;
+
+				r.y += 2;
+
+				r.width = 13;
+				r.height = 13;
+
+				GUI.DrawTexture(r, Icons.boundingBox);
+			}
 		}
 
 	}
@@ -251,8 +272,8 @@ public class SpineEditorUtilities : AssetPostprocessor {
 					imagePaths.Add(str);
 					break;
 				case ".json":
-					TextAsset spineJson = (TextAsset)AssetDatabase.LoadAssetAtPath(str, typeof(TextAsset));
-					if (IsSpineJSON(spineJson)) {
+					TextAsset spineDataFile = (TextAsset)AssetDatabase.LoadAssetAtPath(str, typeof(TextAsset));
+					if (IsValidSpineData(spineDataFile)) {
 						skeletonPaths.Add(str);
 					}
 					break;
@@ -518,6 +539,9 @@ public class SpineEditorUtilities : AssetPostprocessor {
 	public static List<string> GetRequiredAtlasRegions (string jsonPath) {
 		List<string> requiredPaths = new List<string>();
 
+		// FIXME - This doesn't work for a binary skeleton file!
+		if (jsonPath.Contains(".skel")) return requiredPaths;
+
 		TextAsset spineJson = (TextAsset)AssetDatabase.LoadAssetAtPath(jsonPath, typeof(TextAsset));
 
 		StringReader reader = new StringReader(spineJson.text);
@@ -528,6 +552,12 @@ public class SpineEditorUtilities : AssetPostprocessor {
 
 				foreach (KeyValuePair<string, object> attachmentEntry in ((Dictionary<string, object>)slotEntry.Value)) {
 					var data = ((Dictionary<string, object>)attachmentEntry.Value);
+					if (data.ContainsKey("type")) {
+						if ((string)data["type"] == "boundingbox") {
+							continue;
+						}
+							
+					}
 					if (data.ContainsKey("path"))
 						requiredPaths.Add((string)data["path"]);
 					else if (data.ContainsKey("name"))
@@ -586,8 +616,14 @@ public class SpineEditorUtilities : AssetPostprocessor {
 		return arr;
 	}
 
-	public static bool IsSpineJSON (TextAsset asset) {
-		object obj = Json.Deserialize(new StringReader(asset.text));
+	public static bool IsValidSpineData (TextAsset asset) {
+		if (asset.name.Contains(".skel")) return true;
+
+		object obj = null;
+		try {
+			obj = Json.Deserialize(new StringReader(asset.text));
+		} catch (System.Exception) {
+		}
 		if (obj == null) {
 			Debug.LogError("Is not valid JSON");
 			return false;
